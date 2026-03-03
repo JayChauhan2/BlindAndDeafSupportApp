@@ -58,14 +58,15 @@ def generate_response(file_path: dict):
     print("Model response-----------")
     print(model_text_response)
 
-    speech_file_path = Path(__file__).parent / "speech.wav"
-    response = client.audio.speech.create(
-        model="canopylabs/orpheus-v1-english",
-        voice="autumn",
-        response_format="wav",
-        input=model_text_response,
-    )
-    print(response)
-    # response.stream_to_file(speech_file_path)
-    response.write_to_file(speech_file_path)
-    return {"file_path": speech_file_path, "messages": messages}
+    # speech_file_path = Path(__file__).parent / "speech.wav"
+    # response = client.audio.speech.create(
+    #     model="canopylabs/orpheus-v1-english",
+    #     voice="autumn",
+    #     response_format="wav",
+    #     input=model_text_response,
+    # )
+    # print(response)
+    # # response.stream_to_file(speech_file_path)
+    # response.write_to_file(speech_file_path)
+    print(messages)
+    return {"model_text_response": model_text_response}

@@ -3,14 +3,16 @@ import {
   RecordingPresets,
   setAudioModeAsync,
   useAudioRecorder,
-  useAudioRecorderState,
+  useAudioRecorderState
 } from 'expo-audio';
+import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, View } from 'react-native';
 
 const API_URL = 'http://127.0.0.1:8000';
 
 export default function AudioRecorderComponent() {
+
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
   const [recordingPath, setRecordingPath] = useState('');
@@ -18,10 +20,12 @@ export default function AudioRecorderComponent() {
   const record = async () => {
     await audioRecorder.prepareToRecordAsync();
     audioRecorder.record();
+    Speech.stop();
   };
 
   const stopRecording = async () => {
     // The recording will be available on `audioRecorder.uri`.
+    // const sound = require('../speech.wav');
     await audioRecorder.stop();
     setRecordingPath(audioRecorder.uri.slice(7))
     console.log(recordingPath)
@@ -34,8 +38,8 @@ export default function AudioRecorderComponent() {
         body: JSON.stringify({ signal_data: recordingPath || 'No uri path' }) //get rid of file://
       });
 
-      const data = await response.json();
-      console.log(data.messages);
+      const data = await response.json(); //stuff returned from backend
+      Speech.speak(data.model_text_response); //say the response aloud
     } catch (error) {
       console.error('Error sending signal:', error);
       console.log('Failed to send signal. Check console and IP address.');
