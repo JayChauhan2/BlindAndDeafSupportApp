@@ -1,5 +1,5 @@
 import os
-from pathlib import Path
+
 from dotenv import load_dotenv
 from groq import Groq
 from fastapi import FastAPI
@@ -29,6 +29,8 @@ messages=[]
 def generate_response(file_path: dict):
     print(file_path)
     file_path=file_path["signal_data"]
+    if file_path== "None":
+        return {"model_text_response": "Please try again."}
     # Transcribe User Input (STT)
     user_text=""
     with open(file_path, "rb") as file:

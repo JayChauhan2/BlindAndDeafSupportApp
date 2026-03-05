@@ -17,6 +17,24 @@ export default function AudioRecorderComponent() {
   const recorderState = useAudioRecorderState(audioRecorder);
   const [recordingPath, setRecordingPath] = useState('');
   
+  const sendUserMessageToModel = async (recordingPath) => {
+    try {
+      const response = await fetch(`${API_URL}/generate-text-response`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ signal_data: recordingPath || 'None' }) //get rid of file://
+      });
+
+      const data = await response.json(); //stuff returned from backend
+      Speech.speak(data.model_text_response); //say the response aloud
+    } catch (error) {
+      console.error('Error sending signal:', error);
+      console.log('Failed to send signal. Check console and IP address.');
+    }
+  }
+
   const record = async () => {
     await audioRecorder.prepareToRecordAsync();
     audioRecorder.record();
@@ -29,21 +47,7 @@ export default function AudioRecorderComponent() {
     await audioRecorder.stop();
     setRecordingPath(audioRecorder.uri.slice(7))
     console.log(recordingPath)
-    try {
-      const response = await fetch(`${API_URL}/generate-text-response`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ signal_data: recordingPath || 'No uri path' }) //get rid of file://
-      });
-
-      const data = await response.json(); //stuff returned from backend
-      Speech.speak(data.model_text_response); //say the response aloud
-    } catch (error) {
-      console.error('Error sending signal:', error);
-      console.log('Failed to send signal. Check console and IP address.');
-    }
+    sendUserMessageToModel(recordingPath);
   };
 
   useEffect(() => {
