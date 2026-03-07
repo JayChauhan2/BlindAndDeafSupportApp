@@ -1,7 +1,7 @@
 import AudioRecorderComponent from '@/components/AudioRecorder';
 import EditScreenInfo from '@/components/EditScreenInfo';
+import TakeImageComponent from '@/components/TakeImage';
 import { Text, View } from '@/components/Themed';
-import VideoRecorderComponent from '@/components/VideoRecorder';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 export default function TabOneScreen() {
@@ -13,7 +13,7 @@ export default function TabOneScreen() {
       <Text style={styles.title}>Tab Oneeeeeeee</Text>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <EditScreenInfo path="app/(tabs)/index.tsx" />
-      <VideoRecorderComponent></VideoRecorderComponent>
+      <TakeImageComponent></TakeImageComponent>
       <AudioRecorderComponent></AudioRecorderComponent>
     </View>
   );

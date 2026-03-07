@@ -1,5 +1,5 @@
 import os
-
+import base64
 from dotenv import load_dotenv
 from groq import Groq
 from fastapi import FastAPI
@@ -22,6 +22,47 @@ app.add_middleware(
 @app.get("/hello")
 def read_root():
     return {"message": "Hello from FastAPI"}
+
+
+@app.post("/describe-scene")
+def describe_scene(image_path : dict):
+    image_path=image_path["signal_data"]
+    print("image path is " + image_path)
+
+
+    if image_path== "None":
+        return {"model_text_response": "Please try again."}
+
+    # Function to encode the image
+    base_64_img = None
+    with open(image_path, "rb") as image_file:
+        base_64_img=base64.b64encode(image_file.read()).decode('utf-8')
+    
+    # Model text response
+    completion = client.chat.completions.create(
+        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Describe this image to me. I'm a blind person. ONLY Describe the image, don't say any other message like Sure or replying to this message. Solely describe the image.?"},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base_64_img}",
+                        },
+                    },
+                ],
+            }
+        ],
+        temperature=1,
+        max_completion_tokens=1024,
+        top_p=1,
+        stream=False,
+        stop=None
+    )
+    model_text_response=completion.choices[0].message.content
+    return {"model_text_response": model_text_response}
 
 messages=[]
 

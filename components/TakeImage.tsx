@@ -8,16 +8,38 @@ import {
   useCameraPermissions,
 } from "expo-camera";
 import { Image } from "expo-image";
+import * as Speech from 'expo-speech';
 import { useRef, useState } from "react";
 import { Button, Pressable, StyleSheet, Text, View } from "react-native";
 
-export default function VideoRecorderComponent() {
+const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
+
+export default function TakeImageComponent() {
   const [permission, requestPermission] = useCameraPermissions();
   const ref = useRef<CameraView>(null);
-  const [uri, setUri] = useState<string | null>(null);
+  const [uri, setUri] = useState('');
   const [mode, setMode] = useState<CameraMode>("picture");
   const [facing, setFacing] = useState<CameraType>("back");
   const [recording, setRecording] = useState(false);
+
+  const sendUserPicToModel = async (picPath) => {
+      try {
+        console.log("signal data: " + picPath)
+        const response = await fetch(`${API_URL}/describe-scene`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ signal_data: picPath || "None" }) //get rid of file://
+        });
+        console.log("picPath is " + picPath)
+        const data = await response.json(); //stuff returned from backend
+        Speech.speak(data.model_text_response); //say the response aloud
+      } catch (error) {
+        console.error('Error sending signal:', error);
+        console.log('Failed to send signal. Check console and IP address.');
+      }
+    }
 
   if (!permission) {
     return null;
@@ -36,7 +58,9 @@ export default function VideoRecorderComponent() {
 
   const takePicture = async () => {
     const photo = await ref.current?.takePictureAsync();
+    console.log("The phone uri is " + photo?.uri)
     if (photo?.uri) setUri(photo.uri);
+    if (photo?.uri) sendUserPicToModel(String(photo.uri).slice(7));
   };
 
   const recordVideo = async () => {
@@ -66,7 +90,7 @@ export default function VideoRecorderComponent() {
           contentFit="contain"
           style={{ width: 300, aspectRatio: 1 }}
         />
-        <Button onPress={() => setUri(null)} title="Take another picture" />
+        <Button onPress={() => setUri("")} title="Take another picture" />
       </View>
     );
   };

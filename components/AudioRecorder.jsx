@@ -9,7 +9,7 @@ import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
 import { Button, StyleSheet, View } from 'react-native';
 
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
 export default function AudioRecorderComponent() {
 
