@@ -1,8 +1,10 @@
 import os
 import base64
+import shutil
+from pathlib import Path
 from dotenv import load_dotenv
 from groq import Groq
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
@@ -20,15 +22,23 @@ app.add_middleware(
 )
 
 @app.get("/hello")
-def read_root():
+async def read_root():
     return {"message": "Hello from FastAPI"}
 
-
 @app.post("/describe-scene")
-def describe_scene(image_path : dict):
-    image_path=image_path["signal_data"]
-    print("image path is " + image_path)
+async def describe_scene(file: UploadFile = File(...)):
+    image_path = Path.cwd() / file.filename
 
+    try:
+        # Open a file in write-binary mode and use the uploaded file's data
+        with open(file.filename, "wb") as buffer:
+            # Efficiently stream the file in chunks to disk
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        return {"message": f"There was an error uploading the file: {e}"}
+    finally:
+        # Ensure the temporary file is closed
+        await file.close()
 
     if image_path== "None":
         return {"model_text_response": "Please try again."}
@@ -67,7 +77,7 @@ def describe_scene(image_path : dict):
 messages=[]
 
 @app.post("/generate-text-response")
-def generate_response(file_path: dict):
+async def generate_response(file_path: dict):
     print(file_path)
     file_path=file_path["signal_data"]
     if file_path== "None":

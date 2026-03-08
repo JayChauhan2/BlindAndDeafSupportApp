@@ -21,6 +21,33 @@ export default function TakeImageComponent() {
   const [mode, setMode] = useState<CameraMode>("picture");
   const [facing, setFacing] = useState<CameraType>("back");
   const [recording, setRecording] = useState(false);
+  const uploadImage = async (imageUri) => {
+    const formData = new FormData();
+
+    // Extract filename
+    const uriParts = imageUri.split('/');
+    const fileName = uriParts[uriParts.length - 1];
+
+    formData.append('file', {
+      uri: imageUri,
+      name: fileName,
+      type: 'image/jpeg', // or 'image/png'
+    } as any);
+    try {
+      const response = await fetch(`${API_URL}/describe-scene`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      const data = await response.json(); //stuff returned from backend
+      Speech.speak(data.model_text_response); //say the response aloud
+    } catch (error) {
+      console.error('Error sending signal:', error);
+      console.log('Failed to send signal. Check console and IP address.');
+    }
+  };
 
   const sendUserPicToModel = async (picPath) => {
       try {
@@ -60,7 +87,8 @@ export default function TakeImageComponent() {
     const photo = await ref.current?.takePictureAsync();
     console.log("The phone uri is " + photo?.uri)
     if (photo?.uri) setUri(photo.uri);
-    if (photo?.uri) sendUserPicToModel(String(photo.uri).slice(7));
+    // if (photo?.uri) sendUserPicToModel(String(photo.uri).slice(7));
+    if (photo?.uri) uploadImage(photo.uri);
   };
 
   const recordVideo = async () => {
