@@ -58,10 +58,11 @@ export default function AudioRecorderComponent() {
     // The recording will be available on `audioRecorder.uri`.
     // const sound = require('../speech.wav');
     await audioRecorder.stop();
-    setRecordingPath(audioRecorder.uri)
-    // setRecordingPath(audioRecorder.uri.slice(7))
-    console.log("My path is " + recordingPath)
-    // sendUserMessageToModel(recordingPath);
+    if ((audioRecorder?.uri) && (audioRecorder.uri.length > 0)) {
+      setRecordingPath(audioRecorder.uri);
+      sendUserMessageToModel(audioRecorder.uri);
+    }
+    console.log(typeof audioRecorder.uri)
   };
 
   useEffect(() => {

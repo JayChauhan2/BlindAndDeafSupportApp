@@ -132,63 +132,58 @@ messages=[]
 @app.post("/generate-text-response")
 async def generate_response(file: UploadFile = File(...)):
 
-    # file_path = Path.cwd() / file.filename
+    file_path = os.path.join(Path.cwd(), file.filename)
 
-    # try:
-    #     # Open a file in write-binary mode and use the uploaded file's data
-    #     with open(file.filename, "wb") as buffer:
-    #         # Efficiently stream the file in chunks to disk
-    #         shutil.copyfileobj(file.file, buffer)
-    # except Exception as e:
-    #     return {"message": f"There was an error uploading the file: {e}"}
-    # finally:
-    #     # Ensure the temporary file is closed
-    #     await file.close()
+    try:
+        # Open a file in write-binary mode and use the uploaded file's data
+        with open(file.filename, "wb+") as buffer:
+            # Efficiently stream the file in chunks to disk
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        return {"model_text_response": f"There was an error uploading the file: {e}"}
+    finally:
+        # Ensure the temporary file is closed
+        await file.close()
 
-    # if file_path== "None":
-    #     return {"model_text_response": "Please try again."}
 
-    # # Transcribe User Input (STT)
-    # user_text=""
-    # with open(file_path, "rb") as file:
-    #     transcription = client.audio.transcriptions.create(
-    #         file=(file_path, file.read()),
-    #         model="whisper-large-v3-turbo",
-    #         temperature=0,
-    #         response_format="verbose_json",
-    #     )
-    #     user_text = transcription.text
-    #     print("User text-----------")
-    #     print(user_text)
-    # messages.append({"role": "user", "content": user_text})
+    # Transcribe User Input (STT)
+    user_text=""
+    with open(file_path, "rb") as file:
+        transcription = client.audio.transcriptions.create(
+            file=(file_path, file.read()),
+            model="whisper-large-v3-turbo",
+            temperature=0,
+            response_format="verbose_json",
+        )
+        user_text = transcription.text
+        print("User text-----------")
+        print(user_text)
+    messages.append({"role": "user", "content": user_text})
     
-    # # Model text response
-    # completion = client.chat.completions.create(
-    #     model="meta-llama/llama-4-scout-17b-16e-instruct",
-    #     messages=messages,
-    #     temperature=1,
-    #     max_completion_tokens=1024,
-    #     top_p=1,
-    #     stream=False,
-    #     stop=None
+    # Model text response
+    completion = client.chat.completions.create(
+        model="meta-llama/llama-4-scout-17b-16e-instruct",
+        messages=messages,
+        temperature=1,
+        max_completion_tokens=1024,
+        top_p=1,
+        stream=False,
+        stop=None
+    )
+    model_text_response=completion.choices[0].message.content
+    messages.append({"role": "assistant", "content": model_text_response})
+    print("Model response-----------")
+    print(model_text_response)
+
+    # speech_file_path = Path(__file__).parent / "speech.wav"
+    # response = client.audio.speech.create(
+    #     model="canopylabs/orpheus-v1-english",
+    #     voice="autumn",
+    #     response_format="wav",
+    #     input=model_text_response,
     # )
-    # model_text_response=completion.choices[0].message.content
-    # messages.append({"role": "assistant", "content": model_text_response})
-    # print("Model response-----------")
-    # print(model_text_response)
-
-    # # speech_file_path = Path(__file__).parent / "speech.wav"
-    # # response = client.audio.speech.create(
-    # #     model="canopylabs/orpheus-v1-english",
-    # #     voice="autumn",
-    # #     response_format="wav",
-    # #     input=model_text_response,
-    # # )
-    # # print(response)
-    # # # response.stream_to_file(speech_file_path)
-    # # response.write_to_file(speech_file_path)
-    # print(messages)
-    # return {"model_text_response": model_text_response}
-
-
-    return {"model_text_response": "hello"}
+    # print(response)
+    # # response.stream_to_file(speech_file_path)
+    # response.write_to_file(speech_file_path)
+    print(messages)
+    return {"model_text_response": model_text_response}
