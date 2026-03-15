@@ -17,14 +17,27 @@ export default function AudioRecorderComponent() {
   const recorderState = useAudioRecorderState(audioRecorder);
   const [recordingPath, setRecordingPath] = useState('');
   
-  const sendUserMessageToModel = async (recordingPath) => {
+  const sendUserMessageToModel = async (recordingUri) => {
+
+    const formData = new FormData();
+
+    // Extract filename
+    const uriParts = recordingUri.split('/');
+    const fileName = uriParts[uriParts.length - 1];
+
+    formData.append('file', {
+      uri: recordingUri,
+      name: fileName,
+      type: 'audio/m4a',
+    } as any);
+
     try {
       const response = await fetch(`${API_URL}/generate-text-response`, {
         method: 'POST',
+        body: formData, //get rid of file://
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
-        body: JSON.stringify({ signal_data: recordingPath || 'None' }) //get rid of file://
       });
 
       const data = await response.json(); //stuff returned from backend
@@ -45,9 +58,10 @@ export default function AudioRecorderComponent() {
     // The recording will be available on `audioRecorder.uri`.
     // const sound = require('../speech.wav');
     await audioRecorder.stop();
-    setRecordingPath(audioRecorder.uri.slice(7))
-    console.log(recordingPath)
-    sendUserMessageToModel(recordingPath);
+    setRecordingPath(audioRecorder.uri)
+    // setRecordingPath(audioRecorder.uri.slice(7))
+    console.log("My path is " + recordingPath)
+    // sendUserMessageToModel(recordingPath);
   };
 
   useEffect(() => {

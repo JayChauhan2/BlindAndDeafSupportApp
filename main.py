@@ -1,3 +1,6 @@
+# python3 -m uvicorn main:app --reload 
+# ngrok http 8000
+
 import os
 import base64
 import shutil
@@ -74,32 +77,47 @@ async def describe_scene(file: UploadFile = File(...)):
     model_text_response=completion.choices[0].message.content
     return {"model_text_response": model_text_response}
 
-messages=[]
 
-@app.post("/generate-text-response")
-async def generate_response(file_path: dict):
-    print(file_path)
-    file_path=file_path["signal_data"]
-    if file_path== "None":
+@app.post("/read-text")
+async def read_text(file: UploadFile = File(...)):
+    image_path = Path.cwd() / file.filename
+
+    try:
+        # Open a file in write-binary mode and use the uploaded file's data
+        with open(file.filename, "wb") as buffer:
+            # Efficiently stream the file in chunks to disk
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        return {"message": f"There was an error uploading the file: {e}"}
+    finally:
+        # Ensure the temporary file is closed
+        await file.close()
+
+    if image_path== "None":
         return {"model_text_response": "Please try again."}
-    # Transcribe User Input (STT)
-    user_text=""
-    with open(file_path, "rb") as file:
-        transcription = client.audio.transcriptions.create(
-            file=(file_path, file.read()),
-            model="whisper-large-v3-turbo",
-            temperature=0,
-            response_format="verbose_json",
-        )
-        user_text = transcription.text
-        print("User text-----------")
-        print(user_text)
-    messages.append({"role": "user", "content": user_text})
+
+    # Function to encode the image
+    base_64_img = None
+    with open(image_path, "rb") as image_file:
+        base_64_img=base64.b64encode(image_file.read()).decode('utf-8')
     
     # Model text response
     completion = client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct",
-        messages=messages,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Read all the text in this image to me. I'm a blind person. ONLY read the text you see, don't say any other message like Sure or replying to this message. Solely read the text."},
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base_64_img}",
+                        },
+                    },
+                ],
+            }
+        ],
         temperature=1,
         max_completion_tokens=1024,
         top_p=1,
@@ -107,19 +125,70 @@ async def generate_response(file_path: dict):
         stop=None
     )
     model_text_response=completion.choices[0].message.content
-    messages.append({"role": "assistant", "content": model_text_response})
-    print("Model response-----------")
-    print(model_text_response)
-
-    # speech_file_path = Path(__file__).parent / "speech.wav"
-    # response = client.audio.speech.create(
-    #     model="canopylabs/orpheus-v1-english",
-    #     voice="autumn",
-    #     response_format="wav",
-    #     input=model_text_response,
-    # )
-    # print(response)
-    # # response.stream_to_file(speech_file_path)
-    # response.write_to_file(speech_file_path)
-    print(messages)
     return {"model_text_response": model_text_response}
+
+messages=[]
+
+@app.post("/generate-text-response")
+async def generate_response(file: UploadFile = File(...)):
+
+    # file_path = Path.cwd() / file.filename
+
+    # try:
+    #     # Open a file in write-binary mode and use the uploaded file's data
+    #     with open(file.filename, "wb") as buffer:
+    #         # Efficiently stream the file in chunks to disk
+    #         shutil.copyfileobj(file.file, buffer)
+    # except Exception as e:
+    #     return {"message": f"There was an error uploading the file: {e}"}
+    # finally:
+    #     # Ensure the temporary file is closed
+    #     await file.close()
+
+    # if file_path== "None":
+    #     return {"model_text_response": "Please try again."}
+
+    # # Transcribe User Input (STT)
+    # user_text=""
+    # with open(file_path, "rb") as file:
+    #     transcription = client.audio.transcriptions.create(
+    #         file=(file_path, file.read()),
+    #         model="whisper-large-v3-turbo",
+    #         temperature=0,
+    #         response_format="verbose_json",
+    #     )
+    #     user_text = transcription.text
+    #     print("User text-----------")
+    #     print(user_text)
+    # messages.append({"role": "user", "content": user_text})
+    
+    # # Model text response
+    # completion = client.chat.completions.create(
+    #     model="meta-llama/llama-4-scout-17b-16e-instruct",
+    #     messages=messages,
+    #     temperature=1,
+    #     max_completion_tokens=1024,
+    #     top_p=1,
+    #     stream=False,
+    #     stop=None
+    # )
+    # model_text_response=completion.choices[0].message.content
+    # messages.append({"role": "assistant", "content": model_text_response})
+    # print("Model response-----------")
+    # print(model_text_response)
+
+    # # speech_file_path = Path(__file__).parent / "speech.wav"
+    # # response = client.audio.speech.create(
+    # #     model="canopylabs/orpheus-v1-english",
+    # #     voice="autumn",
+    # #     response_format="wav",
+    # #     input=model_text_response,
+    # # )
+    # # print(response)
+    # # # response.stream_to_file(speech_file_path)
+    # # response.write_to_file(speech_file_path)
+    # print(messages)
+    # return {"model_text_response": model_text_response}
+
+
+    return {"model_text_response": "hello"}

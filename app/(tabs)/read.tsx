@@ -1,3 +1,4 @@
+// you left off trying to figure out how to create stack whenever user presses the click button camera
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -14,7 +15,7 @@ import { Button, Pressable, StyleSheet, Text, View } from "react-native";
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
-export default function DescribeSceneComponent() {
+export default function ReadTextComponent() {
   const [permission, requestPermission] = useCameraPermissions();
   const ref = useRef<CameraView>(null);
   const [uri, setUri] = useState('');
@@ -34,8 +35,9 @@ export default function DescribeSceneComponent() {
       name: fileName,
       type: 'image/jpeg', // or 'image/png'
     } as any);
+    
     try {
-      const response = await fetch(`${API_URL}/describe-scene`, {
+      const response = await fetch(`${API_URL}/read-text`, {
         method: 'POST',
         body: formData,
         headers: {
