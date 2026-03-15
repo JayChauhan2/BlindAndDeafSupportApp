@@ -7,12 +7,14 @@ import shutil
 from pathlib import Path
 from dotenv import load_dotenv
 from groq import Groq
+from tavily import TavilyClient
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+tavily = TavilyClient(api_key=os.getenv("TAVILY_KEY"))
 
 app = FastAPI()
 
@@ -127,6 +129,25 @@ async def read_text(file: UploadFile = File(...)):
     model_text_response=completion.choices[0].message.content
     return {"model_text_response": model_text_response}
 
+def search_intent_or_not(user_msg):
+    #return "search" or "general"
+    completion = client.chat.completions.create(
+        model="meta-llama/llama-4-scout-17b-16e-instruct", #smaller model
+        messages=[
+            {
+                "role": "user",
+                "content": "Your job is to sort the sentiment of the following message into two categories, either 'search' or 'general'. Note the capitalization. I am trying to determine whether the following message requires a search query to be answered. For example, a query that may require a search would be 'what is the weather near me like' or 'whats the latest news.' Something that wouldn't require a query would be 'how are you feeling today.' Depending on the query, you should either say 'search' or 'general', but without any quotation marks or capitalization. Don't say anything else like 'okay here is your message' or the sort. Only either one of the two words. Here is the message: " + user_msg
+            }
+        ],
+        temperature=1,
+        max_completion_tokens=1024,
+        top_p=1,
+        stream=False,
+        stop=None
+    )
+    model_text_response=completion.choices[0].message.content
+    return model_text_response
+
 messages=[]
 
 @app.post("/generate-text-response")
@@ -160,30 +181,34 @@ async def generate_response(file: UploadFile = File(...)):
         print(user_text)
     messages.append({"role": "user", "content": user_text})
     
-    # Model text response
-    completion = client.chat.completions.create(
-        model="meta-llama/llama-4-scout-17b-16e-instruct",
-        messages=messages,
-        temperature=1,
-        max_completion_tokens=1024,
-        top_p=1,
-        stream=False,
-        stop=None
-    )
-    model_text_response=completion.choices[0].message.content
-    messages.append({"role": "assistant", "content": model_text_response})
-    print("Model response-----------")
-    print(model_text_response)
-
-    # speech_file_path = Path(__file__).parent / "speech.wav"
-    # response = client.audio.speech.create(
-    #     model="canopylabs/orpheus-v1-english",
-    #     voice="autumn",
-    #     response_format="wav",
-    #     input=model_text_response,
-    # )
-    # print(response)
-    # # response.stream_to_file(speech_file_path)
-    # response.write_to_file(speech_file_path)
-    print(messages)
+    # determine if search worthy
+    # check if the returned message turned to lowercase .lower() has the text either search or general in it, and keep retrying till it does
+    user_message_intent = search_intent_or_not(user_text)
+    print(user_message_intent)
+    if user_message_intent == "general":
+        # Model text response
+        completion = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=messages,
+            temperature=1,
+            max_completion_tokens=1024,
+            top_p=1,
+            stream=False,
+            stop=None
+        )
+        model_text_response=completion.choices[0].message.content
+        messages.append({"role": "assistant", "content": model_text_response})
+        print("Model response-----------")
+        print(model_text_response)
+        print(messages)
+    else:
+        response = tavily.search(
+            query=user_text,
+            include_answer="basic",
+            search_depth="advanced"
+        )
+        print(response) # you may want to take tavily's response and make it speak-friendly
+        model_text_response=response["answer"]
+        messages.append({"role": "assistant", "content": model_text_response})
+    
     return {"model_text_response": model_text_response}
