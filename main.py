@@ -8,14 +8,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 from groq import Groq
 from tavily import TavilyClient
-from google.genai import Client
+from google import genai
+from google.genai.types import HttpOptions
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 
 
-tts_client = Client(api_key=os.getenv("GOOGLE_AI_STUDIO_KEY"))
+tts_client = genai.Client(api_key=os.getenv("GOOGLE_AI_STUDIO_KEY"))
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 tavily = TavilyClient(api_key=os.getenv("TAVILY_KEY"))
@@ -234,8 +235,8 @@ async def transcribe(file: UploadFile = File(...)):
         await file.close()
 
     audio_file = tts_client.files.upload(file=file_path)
-    response = client.models.generate_content(
-        model='gemini-1.5-flash',
+    response = tts_client.models.generate_content(
+        model='gemini-2.5-flash',
         contents=[
             "Please transcribe this audio and diarize it by speaker (e.g., Speaker 1, Speaker 2).",
             audio_file
