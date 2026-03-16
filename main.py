@@ -8,10 +8,14 @@ from pathlib import Path
 from dotenv import load_dotenv
 from groq import Groq
 from tavily import TavilyClient
+from google.genai import Client
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
+
+
+tts_client = Client(api_key=os.getenv("GOOGLE_AI_STUDIO_KEY"))
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 tavily = TavilyClient(api_key=os.getenv("TAVILY_KEY"))
@@ -212,3 +216,30 @@ async def generate_response(file: UploadFile = File(...)):
         messages.append({"role": "assistant", "content": model_text_response})
     
     return {"model_text_response": model_text_response}
+
+@app.post("/transcribe")
+async def transcribe(file: UploadFile = File(...)):
+    
+    file_path = os.path.join(Path.cwd(), file.filename)
+
+    try:
+        # Open a file in write-binary mode and use the uploaded file's data
+        with open(file.filename, "wb+") as buffer:
+            # Efficiently stream the file in chunks to disk
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        return {"model_text_response": f"There was an error uploading the file: {e}"}
+    finally:
+        # Ensure the temporary file is closed
+        await file.close()
+
+    audio_file = tts_client.files.upload(file=file_path)
+    response = client.models.generate_content(
+        model='gemini-1.5-flash',
+        contents=[
+            "Please transcribe this audio and diarize it by speaker (e.g., Speaker 1, Speaker 2).",
+            audio_file
+        ]
+    )
+    print(response.text)
+    return {"model_text_response": response.text}

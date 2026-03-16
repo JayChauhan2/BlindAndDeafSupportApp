@@ -33,6 +33,7 @@ yarn-error.*
 # local env files
 .env*.local
 .env
+client_secret_11431877487-ogau39uf128pig2q01jg75fjm7b726ej.apps.googleusercontent.com.json
 
 # typescript
 *.tsbuildinfo

@@ -32,7 +32,7 @@ export default function AudioRecorderComponent() {
     } as any);
 
     try {
-      const response = await fetch(`${API_URL}/generate-text-response`, {
+      const response = await fetch(`${API_URL}/transcribe`, { // used to be /generate-text-response
         method: 'POST',
         body: formData, //get rid of file://
         headers: {
