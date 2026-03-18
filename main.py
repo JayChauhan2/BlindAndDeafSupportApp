@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from groq import Groq
 from tavily import TavilyClient
 from google import genai
-from google.genai.types import HttpOptions
+from pydantic import BaseModel
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -23,6 +23,9 @@ tavily = TavilyClient(api_key=os.getenv("TAVILY_KEY"))
 
 app = FastAPI()
 
+class TextData(BaseModel):
+    message: str
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], # Adjust this for production security
@@ -34,6 +37,40 @@ app.add_middleware(
 @app.get("/hello")
 async def read_root():
     return {"message": "Hello from FastAPI"}
+
+@app.post("/text-model")
+async def text_model(data: TextData):
+    user_text=data.message
+    user_message_intent = search_intent_or_not(user_text)
+    print(user_message_intent)
+    if user_message_intent == "general":
+        # Model text response
+        completion = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=[{"role": "user", "content": user_text}],
+            temperature=1,
+            max_completion_tokens=1024,
+            top_p=1,
+            stream=False,
+            stop=None
+        )
+        model_text_response=completion.choices[0].message.content
+        messages.append({"role": "assistant", "content": model_text_response})
+        print("Model response-----------")
+        print(model_text_response)
+        print(messages)
+    else:
+        response = tavily.search(
+            query=user_text,
+            include_answer="basic",
+            search_depth="advanced"
+        )
+        print(response) # you may want to take tavily's response and make it speak-friendly
+        model_text_response=response["answer"]
+        messages.append({"role": "assistant", "content": model_text_response})
+    
+    return {"model_text_response": model_text_response}
+
 
 @app.post("/describe-scene")
 async def describe_scene(file: UploadFile = File(...)):
