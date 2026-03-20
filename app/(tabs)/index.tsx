@@ -1,15 +1,33 @@
-import AudioRecorderComponent from '@/components/AudioRecorder';
-import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
+import { Feather, FontAwesome } from '@expo/vector-icons';
+import { Link } from 'expo-router';
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
+
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Oneeeeeeee</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-      <AudioRecorderComponent></AudioRecorderComponent>
+      <Text style={styles.title}>Home</Text>
+      
+      <Link href="/AudioRecorder" push asChild>
+        <TouchableOpacity style={styles.bigButton}>
+          <Text style={styles.bigButtonText}>Speak with Zoe</Text>
+          <View style={styles.iconHolder}>
+            <FontAwesome name="microphone" size={40} color="white" />
+          </View>
+        </TouchableOpacity>
+      </Link>
+      
+
+      <Link href="/" push asChild>
+        <TouchableOpacity style={styles.bigButton}>
+          <Text style={styles.bigButtonText}>Text Zoe</Text>
+          <View style={styles.iconHolder}>
+            <Feather name="message-square" size={40} color="white" />
+          </View>
+        </TouchableOpacity>
+      </Link>
+      
     </View>
   );
 }
@@ -23,6 +41,25 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  bigButton: {
+    backgroundColor: 'blue',
+    height: 220,
+    width: 320,
+    margin: 10,
+    padding: 16,
+    borderRadius: 20,
+    justifyContent: 'space-between'
+  },
+  iconHolder: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    backgroundColor: 'transparent',
+  },
+  bigButtonText: {
+    fontSize: 26,
+    color: 'white',
+    paddingTop: 4,
   },
   separator: {
     marginVertical: 30,
