@@ -62,7 +62,14 @@
       ],
       "expo-audio",
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "expo-speech-transcriber",
+        {
+          "speechRecognitionPermission": "We need speech recognition to transcribe your recordings",
+          "microphonePermission": "We need microphone access to record audio for transcription"
+        }
+      ],
     ],
     "experiments": {
       "typedRoutes": true
