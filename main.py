@@ -192,8 +192,8 @@ def search_intent_or_not(user_msg):
 
 messages=[]
 
-@app.post("/generate-text-response")
-async def generate_response(file: UploadFile = File(...)):
+@app.post("/chat-with-bot")
+async def chat_with_bot(file: UploadFile = File(...)):
 
     file_path = os.path.join(Path.cwd(), file.filename)
 
@@ -271,13 +271,27 @@ async def transcribe(file: UploadFile = File(...)):
         # Ensure the temporary file is closed
         await file.close()
 
-    audio_file = tts_client.files.upload(file=file_path)
-    response = tts_client.models.generate_content(
-        model='gemini-2.5-flash',
-        contents=[
-            "Please transcribe this audio and diarize it by speaker (e.g., Speaker 1, Speaker 2).",
-            audio_file
-        ]
-    )
-    print(response.text)
-    return {"model_text_response": response.text}
+    # audio_file = tts_client.files.upload(file=file_path)
+    # response = tts_client.models.generate_content(
+    #     model='gemini-2.5-flash',
+    #     contents=[
+    #         "Please transcribe this audio and diarize it by speaker (e.g., Speaker 1, Speaker 2).",
+    #         audio_file
+    #     ]
+    # )
+    # print(response.text)
+
+    user_text=""
+    with open(file_path, "rb") as file:
+        transcription = client.audio.transcriptions.create(
+            file=(file_path, file.read()),
+            model="whisper-large-v3-turbo",
+            temperature=0,
+            response_format="verbose_json",
+        )
+        user_text = transcription.text
+        print("User text-----------")
+        print(user_text)
+    # messages.append({"role": "user", "content": user_text})
+
+    return {"model_text_response": user_text}

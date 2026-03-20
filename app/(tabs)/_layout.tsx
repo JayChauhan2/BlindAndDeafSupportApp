@@ -20,7 +20,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: 'Home',
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{
@@ -45,23 +45,6 @@ export default function TabLayout() {
                 )}
               </Pressable>
             </Link>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="two"
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
-              }}
-              tintColor={color}
-              size={28}
-            />
           ),
         }}
       />
@@ -100,9 +83,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="msgbot"
+        name="transcribe"
         options={{
-          title: 'msg',
+          title: 'transcribe text',
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{

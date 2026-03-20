@@ -4,7 +4,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
-export default function Texting() {
+export default function TextBot() {
     const [messages, setMessages] = useState([])
 
     // keyboardVerticalOffset = distance from screen top to GiftedChat container

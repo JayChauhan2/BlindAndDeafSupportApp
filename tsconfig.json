@@ -13,6 +13,5 @@
     "**/*.tsx",
     "**/*.jsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "app/AudioRecorder.tsx"  ]
+    "expo-env.d.ts" ]
 }

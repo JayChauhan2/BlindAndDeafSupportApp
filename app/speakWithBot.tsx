@@ -7,11 +7,11 @@ import {
 } from 'expo-audio';
 import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
-import { Button, StyleSheet, View } from 'react-native';
+import { Alert, Button, StyleSheet, View } from 'react-native';
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
-export default function AudioRecorderComponent() {
+export default function speakWithBot() {
 
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
@@ -32,7 +32,7 @@ export default function AudioRecorderComponent() {
     } as any);
 
     try {
-      const response = await fetch(`${API_URL}/transcribe`, { // used to be /generate-text-response
+      const response = await fetch(`${API_URL}/chat-with-bot`, { // used to be /generate-text-response
         method: 'POST',
         body: formData, //get rid of file://
         headers: {
@@ -91,5 +91,9 @@ export default function AudioRecorderComponent() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'black',
   },
 });
