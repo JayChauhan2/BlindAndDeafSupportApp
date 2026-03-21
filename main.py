@@ -1,6 +1,7 @@
 # python3 -m uvicorn main:app --reload 
 # ngrok http 8000
 
+import json
 import os
 import base64
 import shutil
@@ -25,6 +26,8 @@ app = FastAPI()
 class TextData(BaseModel):
     message: str
 
+HISTORY_FILE = 'ai_memory.json'
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], # Adjust this for production security
@@ -32,6 +35,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+def load_history():
+    if os.path.exists(HISTORY_FILE):
+        with open(HISTORY_FILE, 'r') as f:
+            return json.load(f)
+    return []
+
+def save_history(history):
+    with open(HISTORY_FILE, 'w') as f:
+        json.dump(history, f, indent=2) # Use indent for readability
 
 def search_intent_or_not(user_msg):
     #return "search" or "general"
@@ -49,41 +62,49 @@ def search_intent_or_not(user_msg):
         stream=False,
         stop=None
     )
-    model_text_response=completion.choices[0].message.content
-    return model_text_response
+
+    user_message_intent=completion.choices[0].message.content
+    model_response = ""
+
+    if user_message_intent == "general": # Model text response
+        completion = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=[{"role": "user", "content": user_msg}], #gotta change this to take in the json file
+            temperature=1,
+            max_completion_tokens=1024,
+            top_p=1,
+            stream=False,
+            stop=None
+        )
+        model_response=completion.choices[0].message.content
+    elif user_message_intent == "search": #search query
+        response = tavily.search(
+            query=user_msg,
+            include_answer="basic",
+            search_depth="advanced"
+        )
+        print(response) # you may want to take tavily's response and make it speak-friendly
+        model_response=response["answer"]
+
+    return model_response
 
 messages=[]
 
-def return_text_response(content, type, image_query_type):
+def return_text_response(content, request_type, image_query_type):
 
-    if type == "text": #text query
-        user_message_intent = search_intent_or_not(content) #problem with this. what if they upload image base64.
-        if user_message_intent == "general": # Model text response
-            completion = client.chat.completions.create(
-                model="meta-llama/llama-4-scout-17b-16e-instruct",
-                messages=[{"role": "user", "content": content}],
-                temperature=1,
-                max_completion_tokens=1024,
-                top_p=1,
-                stream=False,
-                stop=None
-            )
-            model_text_response=completion.choices[0].message.content
-            messages.append({"role": "assistant", "content": model_text_response})
-            return model_text_response
-        else: #image query
-            response = tavily.search(
-                query=content,
-                include_answer="basic",
-                search_depth="advanced"
-            )
-            print(response) # you may want to take tavily's response and make it speak-friendly
-            model_text_response=response["answer"]
-            messages.append({"role": "assistant", "content": model_text_response})
-            return model_text_response
-    elif type == "image": #image uploaded
+    history = load_history()
+
+    if request_type == "text": #text query
+        history['messages'].append({"role": "user", "content": content})
+        model_text_response = search_intent_or_not(content)
+        history['messages'].append({"role": "assistant", "content": model_text_response})
+        save_history(history)
+        return model_text_response
+
+    elif request_type == "image": #image uploaded
         base_64_img=content
         model_prompt=""
+
         if image_query_type=="describe":
             model_prompt="Describe this image to me. I'm a blind person. ONLY Describe the image, don't say any other message like Sure or replying to this message. Solely describe the image."
         else: #simply read text
@@ -110,7 +131,7 @@ def return_text_response(content, type, image_query_type):
             stream=False,
             stop=None
         )
-        model_text_response=completion.choices[0].message.content
+        model_text_response=completion.choices[0].message.content #need to save this to json
         return model_text_response
     else: #speech query
         # Transcribe User Input (STT)
@@ -125,34 +146,11 @@ def return_text_response(content, type, image_query_type):
             user_text = transcription.text
             messages.append({"role": "user", "content": user_text})
         
-        # determine if search worthy
-        # check if the returned message turned to lowercase .lower() has the text either search or general in it, and keep retrying till it does
-        user_message_intent = search_intent_or_not(user_text)
-        print(user_message_intent)
-        if user_message_intent == "general":
-            # Model text response
-            completion = client.chat.completions.create(
-                model="meta-llama/llama-4-scout-17b-16e-instruct",
-                messages=messages,
-                temperature=1,
-                max_completion_tokens=1024,
-                top_p=1,
-                stream=False,
-                stop=None
-            )
-            model_text_response=completion.choices[0].message.content
-            messages.append({"role": "assistant", "content": model_text_response})
-            return model_text_response
-        else:
-            response = tavily.search(
-                query=user_text,
-                include_answer="basic",
-                search_depth="advanced"
-            )
-            print(response) # you may want to take tavily's response and make it speak-friendly
-            model_text_response=response["answer"]
-            messages.append({"role": "assistant", "content": model_text_response})
-            return model_text_response
+        history['messages'].append({"role": "user", "content": user_text})
+        model_text_response = search_intent_or_not(user_text)
+        history['messages'].append({"role": "assistant", "content": model_text_response})
+        save_history(history)
+        return model_text_response
         
 @app.post("/text-model") #DONe
 async def text_model(data: TextData): #DOES
@@ -183,6 +181,7 @@ async def describe_scene(file: UploadFile = File(...)):
         base_64_img=base64.b64encode(image_file.read()).decode('utf-8')
 
     model_text_response=return_text_response(base_64_img, "image", "describe")
+
     return {"model_text_response": model_text_response}
 
 @app.post("/read-text") #Done
