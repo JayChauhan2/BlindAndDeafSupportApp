@@ -2,7 +2,7 @@
   "messages": [
     {
       "role": "user",
-      "content": " Hey, how are you doing?"
+      "content": " Skibidi ding dong"
     },
     {
       "role": "assistant",
@@ -79,6 +79,38 @@
     {
       "role": "assistant",
       "content": "Stanford University is a private research institution founded in 1885, ranked among the top globally, and known for its innovation and interdisciplinary research. It offers diverse academic programs and has a strong emphasis on sustainability and global citizenship."
+    },
+    {
+      "role": "user",
+      "content": " Hey, how are you doing?"
+    },
+    {
+      "role": "assistant",
+      "content": "I'm doing well, thanks for asking! I'm a large language model, so I don't have feelings or emotions like humans do, but I'm always happy to chat with you and help with any questions or topics you'd like to discuss. How about you? How's your day going?"
+    },
+    {
+      "role": "user",
+      "content": " I was curious, what was the first thing that I asked you?"
+    },
+    {
+      "role": "assistant",
+      "content": "The first thing you asked was about the first signs of dementia. The first sign was driving issues, followed by memory problems and confusion."
+    },
+    {
+      "role": "user",
+      "content": " Okay, what did I ask you after that?"
+    },
+    {
+      "role": "assistant",
+      "content": "Your first question was \"Hey, how are you doing?\""
+    },
+    {
+      "role": "user",
+      "content": " Hi, what was the first thing that I said to you?"
+    },
+    {
+      "role": "assistant",
+      "content": "The first thing you said to me was \"Skibidi ding dong\"."
     }
   ]
 }

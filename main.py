@@ -46,7 +46,7 @@ def save_history(history):
     with open(HISTORY_FILE, 'w') as f:
         json.dump(history, f, indent=2) # Use indent for readability
 
-def search_intent_or_not(user_msg):
+def search_intent_or_not(user_msg, message_history):
     #return "search" or "general"
     completion = client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct", #smaller model
@@ -69,7 +69,7 @@ def search_intent_or_not(user_msg):
     if user_message_intent == "general": # Model text response
         completion = client.chat.completions.create(
             model="meta-llama/llama-4-scout-17b-16e-instruct",
-            messages=[{"role": "user", "content": user_msg}], #gotta change this to take in the json file
+            messages=message_history, #gotta change this to take in the json file
             temperature=1,
             max_completion_tokens=1024,
             top_p=1,
@@ -96,7 +96,7 @@ def return_text_response(content, request_type, image_query_type):
 
     if request_type == "text": #text query
         history['messages'].append({"role": "user", "content": content})
-        model_text_response = search_intent_or_not(content)
+        model_text_response = search_intent_or_not(content, history['messages'])
         history['messages'].append({"role": "assistant", "content": model_text_response})
         save_history(history)
         return model_text_response
@@ -147,7 +147,7 @@ def return_text_response(content, request_type, image_query_type):
             messages.append({"role": "user", "content": user_text})
         
         history['messages'].append({"role": "user", "content": user_text})
-        model_text_response = search_intent_or_not(user_text)
+        model_text_response = search_intent_or_not(user_text, history['messages'])
         history['messages'].append({"role": "assistant", "content": model_text_response})
         save_history(history)
         return model_text_response
