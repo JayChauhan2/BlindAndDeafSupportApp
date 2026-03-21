@@ -11,7 +11,8 @@ from groq import Groq
 from tavily import TavilyClient
 from google import genai
 from pydantic import BaseModel
-from fastapi import FastAPI, UploadFile, File
+from typing import Annotated
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
@@ -90,7 +91,7 @@ def search_intent_or_not(user_msg, message_history):
 
 messages=[]
 
-def return_text_response(content, request_type, image_query_type):
+def return_text_response(content, request_type, image_query_type, user_location):
 
     history = load_history()
 
@@ -128,7 +129,7 @@ def return_text_response(content, request_type, image_query_type):
                 temperature=0,
                 response_format="verbose_json",
             )
-            user_text = transcription.text
+            user_text = transcription.text + "If relevant, the user's location is " + user_location
             messages.append({"role": "user", "content": user_text})
         
         history['messages'].append({"role": "user", "content": user_text})
@@ -140,7 +141,7 @@ def return_text_response(content, request_type, image_query_type):
         
 @app.post("/text-model") #DONe
 async def text_model(data: TextData): #DOES
-    model_text_response = return_text_response(data.message, "text", None)
+    model_text_response = return_text_response(data.message, "text", None, None)
     return {"model_text_response": model_text_response}
 
 @app.post("/describe-scene") #Done
@@ -166,7 +167,7 @@ async def describe_scene(file: UploadFile = File(...)):
     with open(image_path, "rb") as image_file:
         base_64_img=base64.b64encode(image_file.read()).decode('utf-8')
 
-    model_text_response=return_text_response(base_64_img, "image", "describe")
+    model_text_response=return_text_response(base_64_img, "image", "describe", None)
 
     return {"model_text_response": model_text_response}
 
@@ -193,12 +194,14 @@ async def read_text(file: UploadFile = File(...)):
     with open(image_path, "rb") as image_file:
         base_64_img=base64.b64encode(image_file.read()).decode('utf-8')
     
-    model_text_response=return_text_response(base_64_img, "image", "read")
+    model_text_response=return_text_response(base_64_img, "image", "read", None)
 
     return {"model_text_response": model_text_response}
 
-@app.post("/chat-with-bot") #speak with model
-async def chat_with_bot(file: UploadFile = File(...)):
+@app.post("/speak-with-model") #speak with model
+async def speak_with_model(file: UploadFile = File(...), 
+                           user_location: Annotated[str, Form()] = "No location provided"
+                           ):
 
     file_path = os.path.join(Path.cwd(), file.filename)
 
@@ -213,7 +216,7 @@ async def chat_with_bot(file: UploadFile = File(...)):
         # Ensure the temporary file is closed
         await file.close()
 
-    model_text_response=return_text_response(file_path, "speak", None)
+    model_text_response=return_text_response(file_path, "speak", None, user_location)
 
     return {"model_text_response": model_text_response}
 

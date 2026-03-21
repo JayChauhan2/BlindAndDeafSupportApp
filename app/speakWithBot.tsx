@@ -18,8 +18,8 @@ export default function speakWithBot() {
   const recorderState = useAudioRecorderState(audioRecorder);
   const [recordingPath, setRecordingPath] = useState('');
 
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [location, setLocation] = useState<Location.LocationObject>();
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   
   const sendUserMessageToModel = async (recordingUri) => {
 
@@ -29,6 +29,9 @@ export default function speakWithBot() {
     const uriParts = recordingUri.split('/');
     const fileName = uriParts[uriParts.length - 1];
 
+    formData.append('user_location', "User latitude is " + location?.coords.latitude + ". User longitude is " + location?.coords.longitude);
+    console.log("user location is : " + location?.coords);
+    
     formData.append('file', {
       uri: recordingUri,
       name: fileName,
@@ -36,12 +39,9 @@ export default function speakWithBot() {
     } as any);
 
     try {
-      const response = await fetch(`${API_URL}/chat-with-bot`, { // used to be /generate-text-response
+      const response = await fetch(`${API_URL}/speak-with-model`, { // used to be /generate-text-response
         method: 'POST',
         body: formData, //get rid of file://
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
       });
 
       const data = await response.json(); //stuff returned from backend
@@ -66,7 +66,7 @@ export default function speakWithBot() {
       setRecordingPath(audioRecorder.uri);
       sendUserMessageToModel(audioRecorder.uri);
     }
-    console.log(typeof audioRecorder.uri)
+    console.log(typeof audioRecorder.uri);
   };
 
   useEffect(() => { //microphone permission
