@@ -53,7 +53,7 @@ def search_intent_or_not(user_msg, message_history):
         messages=[
             {
                 "role": "user",
-                "content": "Your job is to sort the sentiment of the following message into two categories, either 'search' or 'general'. Note the capitalization. I am trying to determine whether the following message requires a search query to be answered. For example, a query that may require a search would be 'what is the weather near me like' or 'whats the latest news.' Something that wouldn't require a query would be 'how are you feeling today.' Depending on the query, you should either say 'search' or 'general', but without any quotation marks or capitalization. Don't say anything else like 'okay here is your message' or the sort. Only either one of the two words. Here is the message: " + user_msg
+                "content": "Your job is to sort the sentiment of the following message into two categories, either 'search' or 'general'. Note the capitalization. I am trying to determine whether the following message, which is being sent to a large language model, requires a search query to be answered. For example, a query that may require a search would be 'what is the weather near me like' or 'whats the latest news.' Something that wouldn't require a query would be 'how are you feeling today' or common sense questions. Do not unnecessarily say a question is of type 'search' if the multi-billion-parameter large language model, which is developed by Meta on a huge dataset with lots of common knowledge, should know the answer off the top of its head. For example, a query asking about what Stanford University is would not require a search because it is safe to assume that the model would know what Stanford is along with some general knowledge about it like majors and what type of studies it offers. Depending on the query, you should either say 'search' or 'general', but without any quotation marks or capitalization. Don't say anything else like 'okay here is your message' or the sort. Only say either one of the two words. Here is the message: " + user_msg
             }
         ],
         temperature=1,
@@ -94,13 +94,10 @@ def return_text_response(content, request_type, image_query_type):
 
     history = load_history()
 
+    model_text_response="Skibidi ding dong" #you KNOW you did something wrong if you hear this
     if request_type == "text": #text query
         history['messages'].append({"role": "user", "content": content})
         model_text_response = search_intent_or_not(content, history['messages'])
-        history['messages'].append({"role": "assistant", "content": model_text_response})
-        save_history(history)
-        return model_text_response
-
     elif request_type == "image": #image uploaded
         base_64_img=content
         model_prompt=""
@@ -109,22 +106,11 @@ def return_text_response(content, request_type, image_query_type):
             model_prompt="Describe this image to me. I'm a blind person. ONLY Describe the image, don't say any other message like Sure or replying to this message. Solely describe the image."
         else: #simply read text
             model_prompt="Read all the text in this image to me. I'm a blind person. ONLY read the text you see, don't say any other message like Sure or replying to this message. Solely read the text."
+        
+        history['messages'].append({"role": "user", "content": [{"type": "text", "text": model_prompt}, {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base_64_img}",},},]})
         completion = client.chat.completions.create(
             model="meta-llama/llama-4-scout-17b-16e-instruct",
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": model_prompt},
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{base_64_img}",
-                            },
-                        },
-                    ],
-                }
-            ],
+            messages=history['messages'],
             temperature=1,
             max_completion_tokens=1024,
             top_p=1,
@@ -132,8 +118,7 @@ def return_text_response(content, request_type, image_query_type):
             stop=None
         )
         model_text_response=completion.choices[0].message.content #need to save this to json
-        return model_text_response
-    else: #speech query
+    elif request_type == "speak": #speech query
         # Transcribe User Input (STT)
         user_text=""
         with open(content, "rb") as file:
@@ -148,9 +133,10 @@ def return_text_response(content, request_type, image_query_type):
         
         history['messages'].append({"role": "user", "content": user_text})
         model_text_response = search_intent_or_not(user_text, history['messages'])
-        history['messages'].append({"role": "assistant", "content": model_text_response})
-        save_history(history)
-        return model_text_response
+        
+    history['messages'].append({"role": "assistant", "content": model_text_response})
+    save_history(history)
+    return model_text_response
         
 @app.post("/text-model") #DONe
 async def text_model(data: TextData): #DOES
