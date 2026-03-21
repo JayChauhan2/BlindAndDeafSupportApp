@@ -70,6 +70,12 @@
           "microphonePermission": "We need microphone access to record audio for transcription"
         }
       ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow us to use your location."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

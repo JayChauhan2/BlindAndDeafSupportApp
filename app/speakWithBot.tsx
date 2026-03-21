@@ -5,6 +5,7 @@ import {
   useAudioRecorder,
   useAudioRecorderState
 } from 'expo-audio';
+import * as Location from 'expo-location';
 import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, StyleSheet, View } from 'react-native';
@@ -16,6 +17,9 @@ export default function speakWithBot() {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
   const [recordingPath, setRecordingPath] = useState('');
+
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState("");
   
   const sendUserMessageToModel = async (recordingUri) => {
 
@@ -65,7 +69,7 @@ export default function speakWithBot() {
     console.log(typeof audioRecorder.uri)
   };
 
-  useEffect(() => {
+  useEffect(() => { //microphone permission
     (async () => {
       const status = await AudioModule.requestRecordingPermissionsAsync();
       if (!status.granted) {
@@ -78,6 +82,28 @@ export default function speakWithBot() {
       });
     })();
   }, []);
+
+  useEffect(() => { //location permission
+    (async () => {
+      // 1. Request permission
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      // 2. Get current position
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
+
+  let text = 'Waiting...';
+  if (errorMsg) {
+    text = errorMsg;
+  } else if (location) {
+    text = JSON.stringify(location.coords);
+  }
 
   return (
     <View style={styles.container}>
