@@ -134,6 +134,10 @@ def return_text_response(content, request_type, image_query_type, user_location)
         
         history['messages'].append({"role": "user", "content": user_text})
         model_text_response = search_intent_or_not(user_text, history['messages'])
+
+        history['messages'].append({"role": "assistant", "content": model_text_response}) #temporary because I'm lazy
+        save_history(history)
+        return model_text_response, user_text
         
     history['messages'].append({"role": "assistant", "content": model_text_response})
     save_history(history)
@@ -199,9 +203,7 @@ async def read_text(file: UploadFile = File(...)):
     return {"model_text_response": model_text_response}
 
 @app.post("/speak-with-model") #speak with model
-async def speak_with_model(file: UploadFile = File(...), 
-                           user_location: Annotated[str, Form()] = "No location provided"
-                           ):
+async def speak_with_model(file: UploadFile = File(...), user_location: Annotated[str, Form()] = "No location provided"):
 
     file_path = os.path.join(Path.cwd(), file.filename)
 
@@ -216,9 +218,9 @@ async def speak_with_model(file: UploadFile = File(...),
         # Ensure the temporary file is closed
         await file.close()
 
-    model_text_response=return_text_response(file_path, "speak", None, user_location)
+    model_text_response, user_text = return_text_response(file_path, "speak", None, user_location)
 
-    return {"model_text_response": model_text_response}
+    return {"model_text_response": model_text_response, "user_text": user_text}
 
 @app.post("/transcribe")
 async def transcribe(file: UploadFile = File(...)):

@@ -165,6 +165,22 @@
     {
       "role": "assistant",
       "content": "Your location is near Herndon, Virginia. The current weather is mild with light winds."
+    },
+    {
+      "role": "user",
+      "content": " S-Methylacetylene anti-isolation.If relevant, the user's location is User latitude is 37.69117977361726. User longitude is -77.60126347952786"
+    },
+    {
+      "role": "assistant",
+      "content": "S-Methylacetylene is a flammable gas used in stabilized mixtures like MAPP gas. It poses explosion hazards and requires careful handling. Safety protocols and risk assessments are essential for its isolation and use."
+    },
+    {
+      "role": "user",
+      "content": " Hey, how are you doing?If relevant, the user's location is User latitude is 37.69117677678133. User longitude is -77.60127313509915"
+    },
+    {
+      "role": "assistant",
+      "content": "I'm doing well, thanks for asking. Your location appears to be in the Arlington or Fairfax County area of Virginia."
     }
   ]
 }

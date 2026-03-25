@@ -1,3 +1,4 @@
+import { FontAwesome } from '@expo/vector-icons';
 import {
   AudioModule,
   RecordingPresets,
@@ -8,7 +9,8 @@ import {
 import * as Location from 'expo-location';
 import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
-import { Alert, Button, StyleSheet, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
@@ -46,6 +48,8 @@ export default function speakWithBot() {
 
       const data = await response.json(); //stuff returned from backend
       Speech.speak(data.model_text_response); //say the response aloud
+      console.log(data.user_text); //user's message
+
     } catch (error) {
       console.error('Error sending signal:', error);
       console.log('Failed to send signal. Check console and IP address.');
@@ -107,10 +111,11 @@ export default function speakWithBot() {
 
   return (
     <View style={styles.container}>
-      <Button
-        title={recorderState.isRecording ? 'Stop Recording' : 'Start Recording'}
-        onPress={recorderState.isRecording ? stopRecording : record}
-      />
+      <ScrollView style={styles.scrollView}><Text>sdadasd</Text></ScrollView>
+      <TouchableOpacity onPress={recorderState.isRecording ? stopRecording : record} style={styles.button}>
+        <FontAwesome name={recorderState.isRecording ? 'check' : "microphone"} size={50} color="white" />
+      </TouchableOpacity>
+      
     </View>
   );
 }
@@ -120,6 +125,21 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black',
   },
+  scrollView: {
+    borderColor: 'red',
+    borderWidth: 2,
+    height: 2,
+  },
+  button: { // maybe pentagon shape taking inspiration from something hmmm
+    backgroundColor: 'blue',
+    height: 100,
+    width: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 200,
+  },
+  buttonText: {
+    color: 'white',
+  }
 });
