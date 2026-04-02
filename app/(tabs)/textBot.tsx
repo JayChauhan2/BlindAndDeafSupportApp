@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
-import { Keyboard, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
@@ -45,7 +45,15 @@ export default function textBot() {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
-            <View style={styles.textBoxHolder}>
+
+            <ScrollView style={styles.scrollView}>
+                {listOfMessages.map((item, index) => (
+                <Text key={index} style={[styles.baseText, index % 2 === 0 ? styles.evenText : styles.oddText]}>{item}</Text>
+                ))}
+            </ScrollView>
+
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.textBoxHolder}>
+                
                 <TextInput
                 placeholder="Type away..."
                 onChangeText={newText => setText(newText)}
@@ -55,12 +63,13 @@ export default function textBot() {
                     // Update height state based on content size
                     setHeight(event.nativeEvent.contentSize.height);
                 }}
+                onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}}
                 style={[styles.textBox]} //minimum height
                 />
-                <Pressable onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}} style={({ pressed }) => [{ backgroundColor: pressed ? '#8bae8d' : '#8ed792' }, styles.sendButton]}>
+                <Pressable onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)}} style={({ pressed }) => [{ backgroundColor: pressed ? '#8bae8d' : '#8ed792' }, styles.sendButton]}>
                     <Ionicons name="send" size={30} color="black" />
                 </Pressable>
-            </View>
+            </KeyboardAvoidingView>
         
         </View>
         </TouchableWithoutFeedback>
@@ -73,6 +82,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
+    },
+    scrollView: {
+        padding: 6,
+        paddingTop: 20,
     },
     textBoxHolder: {
         backgroundColor: '#dfdfdf',
