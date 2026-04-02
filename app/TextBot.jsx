@@ -1,5 +1,6 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import React, { useCallback, useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
@@ -53,13 +54,29 @@ export default function TextBot() {
     }, [])
 
     return (
+    <View style={styles.container}>
     <GiftedChat
         messages={messages}
         onSend={messages => onSend(messages)}
+        style={styles.giftedChat}
         user={{
         _id: 1,
         }}
         keyboardAvoidingViewProps={{ keyboardVerticalOffset: headerHeight }}
     />
+    <Text>asd</Text>
+    </View>
     )
 }
+
+
+const styles = StyleSheet.create({
+
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+    },
+    giftedChat: {
+        marginBottom: 20,
+    },
+});

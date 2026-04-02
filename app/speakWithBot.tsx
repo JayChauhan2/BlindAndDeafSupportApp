@@ -11,7 +11,6 @@ import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
 export default function speakWithBot() {
@@ -19,9 +18,10 @@ export default function speakWithBot() {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
   const [recordingPath, setRecordingPath] = useState('');
-
+  const [isPressed, setPressed] = useState(false);
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [listOfMessages, setlistOfMessages] = useState(["What's on your mind?", "What's on your mind?", "What's on your mind?","What's on your mind?", "What's on your mind?", "What's on your mind?","What's on your mind?", "What's on your mind?", "What's on your mind?"]);
   
   const sendUserMessageToModel = async (recordingUri) => {
 
@@ -47,9 +47,9 @@ export default function speakWithBot() {
       });
 
       const data = await response.json(); //stuff returned from backend
+      //order matters
       Speech.speak(data.model_text_response); //say the response aloud
-      console.log(data.user_text); //user's message
-
+      setlistOfMessages([...listOfMessages, data.user_text, data.model_text_response])
     } catch (error) {
       console.error('Error sending signal:', error);
       console.log('Failed to send signal. Check console and IP address.');
@@ -57,6 +57,7 @@ export default function speakWithBot() {
   }
 
   const record = async () => {
+    setPressed(!isPressed);
     await audioRecorder.prepareToRecordAsync();
     audioRecorder.record();
     Speech.stop();
@@ -65,12 +66,13 @@ export default function speakWithBot() {
   const stopRecording = async () => {
     // The recording will be available on `audioRecorder.uri`.
     // const sound = require('../speech.wav');
+    setPressed(!isPressed);
     await audioRecorder.stop();
     if ((audioRecorder?.uri) && (audioRecorder.uri.length > 0)) {
       setRecordingPath(audioRecorder.uri);
       sendUserMessageToModel(audioRecorder.uri);
     }
-    console.log(typeof audioRecorder.uri);
+    // console.log(typeof audioRecorder.uri);
   };
 
   useEffect(() => { //microphone permission
@@ -111,10 +113,15 @@ export default function speakWithBot() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}><Text>sdadasd</Text></ScrollView>
-      <TouchableOpacity onPress={recorderState.isRecording ? stopRecording : record} style={styles.button}>
+      <ScrollView style={styles.scrollView}>
+        {listOfMessages.map((item, index) => (
+          <Text key={index} style={[styles.baseText, index % 2 === 0 ? styles.evenText : styles.oddText]}>{item}</Text>
+        ))}
+      </ScrollView>
+      <View style={styles.buttonHolder}>
+        <TouchableOpacity onPress={recorderState.isRecording ? stopRecording : record} style={isPressed ? styles.bigButton : styles.button}>
         <FontAwesome name={recorderState.isRecording ? 'check' : "microphone"} size={50} color="white" />
-      </TouchableOpacity>
+      </TouchableOpacity></View>
       
     </View>
   );
@@ -123,13 +130,32 @@ export default function speakWithBot() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
   },
-  scrollView: {
-    borderColor: 'red',
+  baseText: {
+    fontSize: 16,
     borderWidth: 2,
+    width: 185,
+    padding: 8,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255, 255, 255, 1)',
+
+  },
+  evenText: {
+    borderColor: 'blue'
+  },
+  oddText: {
+    borderColor: 'green',
+    // left: 200
+    alignSelf: 'flex-end'
+  },
+  scrollView: {
     height: 2,
+    padding: 6,
+    paddingTop: 20,
+  },
+  buttonHolder: {
+    alignItems: 'center'
   },
   button: { // maybe pentagon shape taking inspiration from something hmmm
     backgroundColor: 'blue',
@@ -138,6 +164,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 200,
+    marginBottom: 80,
+    marginTop: 10,
+  },
+  bigButton: {
+    backgroundColor: 'blue',
+    height: 200,
+    width: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 200,
+    marginBottom: 60,
+    marginTop: 10,
   },
   buttonText: {
     color: 'white',
