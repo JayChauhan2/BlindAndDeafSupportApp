@@ -1,8 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, } from 'react-native';
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
@@ -35,7 +34,7 @@ export default function textBot() {
 
     return (
         // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
 
             <ScrollView style={styles.scrollView}>
                 {listOfMessages.map((item, index) => (
@@ -58,7 +57,7 @@ export default function textBot() {
                 </Pressable>
             </KeyboardAvoidingView>
         
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -88,8 +87,7 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         padding: 6,
-        borderWidth: 2,
-        borderColor: 'red',
+        marginTop: 50,
     },
     textBoxHolder: {
         backgroundColor: '#dfdfdf',
