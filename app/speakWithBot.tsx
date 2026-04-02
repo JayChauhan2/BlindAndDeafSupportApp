@@ -6,6 +6,7 @@ import {
   useAudioRecorder,
   useAudioRecorderState
 } from 'expo-audio';
+import { LinearGradient } from 'expo-linear-gradient'; // or 'react-native-linear-gradient'
 import * as Location from 'expo-location';
 import * as Speech from 'expo-speech';
 import React, { useEffect, useState } from 'react';
@@ -31,7 +32,7 @@ export default function speakWithBot() {
     const uriParts = recordingUri.split('/');
     const fileName = uriParts[uriParts.length - 1];
 
-    formData.append('user_location', "User latitude is " + location?.coords.latitude + ". User longitude is " + location?.coords.longitude);
+    // formData.append('user_location', "User latitude is " + location?.coords.latitude + ". User longitude is " + location?.coords.longitude);
     console.log("user location is : " + location?.coords);
     
     formData.append('file', {
@@ -113,11 +114,18 @@ export default function speakWithBot() {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        {listOfMessages.map((item, index) => (
-          <Text key={index} style={[styles.baseText, index % 2 === 0 ? styles.evenText : styles.oddText]}>{item}</Text>
-        ))}
-      </ScrollView>
+        <ScrollView style={styles.scrollView}>
+          {listOfMessages.map((item, index) => (
+            <Text key={index} style={[styles.baseText, index % 2 === 0 ? styles.evenText : styles.oddText]}>{item}</Text>
+          ))}
+        </ScrollView>
+
+      <LinearGradient
+        // Fade from solid black to fully transparent
+        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,1)']}
+        pointerEvents="none"
+        style={{ height: 200, width: '100%', position: 'absolute', bottom: 190}}
+      />
       <View style={styles.buttonHolder}>
         <TouchableOpacity onPress={recorderState.isRecording ? stopRecording : record} style={isPressed ? styles.bigButton : styles.button}>
         <FontAwesome name={recorderState.isRecording ? 'check' : "microphone"} size={50} color="white" />
@@ -131,6 +139,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 1)',
   },
   baseText: {
     fontSize: 16,

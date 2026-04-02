@@ -325,6 +325,14 @@
     {
       "role": "assistant",
       "content": "I'm doing well, thanks for asking. Your location appears to be near Herndon, Virginia."
+    },
+    {
+      "role": "user",
+      "content": " Hey, how are you doing?If relevant, the user's location is No location provided"
+    },
+    {
+      "role": "assistant",
+      "content": "I'm doing well, thanks for asking. No location provided."
     }
   ]
 }
