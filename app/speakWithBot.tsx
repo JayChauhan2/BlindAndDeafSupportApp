@@ -124,7 +124,7 @@ export default function speakWithBot() {
         // Fade from solid black to fully transparent
         colors={['rgba(255,255,255,0)', 'rgba(255,255,255,1)']}
         pointerEvents="none"
-        style={{ height: 200, width: '100%', position: 'absolute', bottom: 190}}
+        style={{ height: 80, width: '100%', position: 'absolute', bottom: 190}}
       />
       <View style={styles.buttonHolder}>
         <TouchableOpacity onPress={recorderState.isRecording ? stopRecording : record} style={isPressed ? styles.bigButton : styles.button}>
@@ -143,20 +143,20 @@ const styles = StyleSheet.create({
   },
   baseText: {
     fontSize: 16,
-    borderWidth: 2,
     width: 185,
     padding: 8,
     borderRadius: 15,
     backgroundColor: 'rgba(255, 255, 255, 1)',
+    color: '#3b3b3b',
 
   },
   evenText: {
-    borderColor: 'blue'
+    backgroundColor: '#F0FFFF'
   },
   oddText: {
-    borderColor: 'green',
     // left: 200
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-end',
+    backgroundColor: '#cefad0',
   },
   scrollView: {
     height: 2,

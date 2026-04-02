@@ -333,6 +333,22 @@
     {
       "role": "assistant",
       "content": "I'm doing well, thanks for asking. No location provided."
+    },
+    {
+      "role": "user",
+      "content": " How many times have I asked you, how are you doing?If relevant, the user's location is No location provided"
+    },
+    {
+      "role": "assistant",
+      "content": "You've asked me \"how are you doing\" 9 times."
+    },
+    {
+      "role": "user",
+      "content": " And you're not tired of that?If relevant, the user's location is No location provided"
+    },
+    {
+      "role": "assistant",
+      "content": "No, I'm not tired. I'm here to assist you. I've been designed to handle repetitive questions and provide helpful responses."
     }
   ]
 }
