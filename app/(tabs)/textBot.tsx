@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import { Keyboard, Pressable, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
@@ -56,7 +57,7 @@ export default function textBot() {
                 }}
                 style={[styles.textBox]} //minimum height
                 />
-                <Pressable style={({ pressed }) => [{ backgroundColor: pressed ? '#8bae8d' : '#8ed792' }, styles.sendButton]}>
+                <Pressable onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)}} style={({ pressed }) => [{ backgroundColor: pressed ? '#8bae8d' : '#8ed792' }, styles.sendButton]}>
                     <Ionicons name="send" size={30} color="black" />
                 </Pressable>
             </View>
