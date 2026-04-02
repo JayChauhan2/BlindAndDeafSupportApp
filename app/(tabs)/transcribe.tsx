@@ -8,11 +8,11 @@
 // import * as Speech from 'expo-speech';
 // import * as SpeechTranscriber from "expo-speech-transcriber";
 // import React, { useEffect, useRef, useState } from 'react';
-// import { Alert, Button, Platform, StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 // const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
-// export default function Transcribe() {
+export default function transcribe() {
 //  //once every 4 seconds
 //   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
 //   const recorderState = useAudioRecorderState(audioRecorder);
@@ -125,7 +125,11 @@
 //             />
 //         </View>
 //     );
-// }
+    return (
+        <View>
+        </View>
+    );
+}
 
 // const styles = StyleSheet.create({
 //     container: {
