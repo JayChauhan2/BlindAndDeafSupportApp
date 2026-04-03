@@ -1,6 +1,9 @@
 // you left off trying to figure out how to create stack whenever user presses the click button camera
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import SegmentedControl from '@react-native-segmented-control/segmented-control';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import {
   CameraMode,
   CameraType,
@@ -15,14 +18,15 @@ import { Alert, Button, Pressable, StyleSheet, Text, View } from "react-native";
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
-export default function ReadTextComponent() {
+export default function camera() {
   const [permission, requestPermission] = useCameraPermissions();
   const ref = useRef<CameraView>(null);
   const [uri, setUri] = useState('');
   const [mode, setMode] = useState<CameraMode>("picture");
   const [facing, setFacing] = useState<CameraType>("back");
   const [recording, setRecording] = useState(false);
-  
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library.
     // Manually request permissions for videos on iOS when `allowsEditing` is set to `false`
@@ -63,9 +67,11 @@ export default function ReadTextComponent() {
       name: fileName,
       type: 'image/jpeg', // or 'image/png'
     } as any);
+
+    const url = selectedIndex === 0 ? 'read-text' : 'describe-scene';
     
     try {
-      const response = await fetch(`${API_URL}/read-text`, {
+      const response = await fetch(`${API_URL}/` + url, {
         method: 'POST',
         body: formData,
         headers: {
@@ -114,10 +120,6 @@ export default function ReadTextComponent() {
     console.log({ video });
   };
 
-  const toggleMode = () => {
-    setMode((prev) => (prev === "picture" ? "video" : "picture"));
-  };
-
   const toggleFacing = () => {
     setFacing((prev) => (prev === "back" ? "front" : "back"));
   };
@@ -130,14 +132,14 @@ export default function ReadTextComponent() {
           contentFit="contain"
           style={{ width: 300, aspectRatio: 1 }}
         />
-        <Button onPress={() => setUri("")} title="Take another picture" />
+        <Button onPress={() => {setUri(""); Speech.stop();}} title="Take another picture" />
       </View>
     );
   };
 
   const renderCamera = () => {
     return (
-      <View style={styles.cameraContainer}>
+      <SafeAreaView style={styles.cameraContainer}>
         <CameraView
           style={styles.camera}
           ref={ref}
@@ -146,6 +148,7 @@ export default function ReadTextComponent() {
           mute={false}
           responsiveOrientationWhenOrientationLocked
         />
+
         <View style={styles.shutterContainer}>
           <Pressable onPress={pickImage}>
             <AntDesign name="picture" size={32} color="white" />
@@ -175,7 +178,23 @@ export default function ReadTextComponent() {
             <FontAwesome6 name="rotate-left" size={32} color="white" />
           </Pressable>
         </View>
-      </View>
+
+        <View style={styles.toggleHolder}>
+          <SegmentedControl
+            values={['Read', 'Describe']}
+            selectedIndex={selectedIndex}
+            
+            tintColor="#007AFF" // Selected segment background
+            backgroundColor="rgba(255, 255, 255, 0)" // Inactive segments background
+            style={{height: 40}}
+            fontStyle={{ color: '#bcbcbc', fontSize: 20 }} // Unselected text color
+            activeFontStyle={{ color: 'rgb(255, 255, 255)', fontSize: 20 }} // Selected text color
+            onChange={(event) => {
+              setSelectedIndex(event.nativeEvent.selectedSegmentIndex);
+            }}
+          />
+        </View>
+      </SafeAreaView>
     );
   };
 
@@ -193,11 +212,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  toggleHolder: {
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0)',
+    position: "absolute",
+    bottom: 10,
+    width: "100%",
+    paddingLeft: 80,
+    paddingRight: 80,
+    height: 60,
+  },
   cameraContainer: StyleSheet.absoluteFill,
   camera: StyleSheet.absoluteFill,
   shutterContainer: {
     position: "absolute",
-    bottom: 44,
+    bottom: 90,
     left: 0,
     width: "100%",
     alignItems: "center",

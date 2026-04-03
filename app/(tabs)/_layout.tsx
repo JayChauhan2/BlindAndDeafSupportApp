@@ -49,26 +49,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="describe"
+        name="camera"
         options={{
-          title: 'Tab describe',
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{
-                ios: 'chevron.left.forwardslash.chevron.right',
-                android: 'code',
-                web: 'code',
-              }}
-              tintColor={color}
-              size={28}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="read"
-        options={{
-          title: 'Tab read',
+          title: 'Camera',
           tabBarIcon: ({ color }) => (
             <SymbolView
               name={{
