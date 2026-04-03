@@ -437,6 +437,14 @@
     {
       "role": "assistant",
       "content": "I'm doing well, thanks for asking!"
+    },
+    {
+      "role": "user",
+      "content": "Hhh"
+    },
+    {
+      "role": "assistant",
+      "content": "Hi! Need assistance or just saying hi?"
     }
   ]
 }

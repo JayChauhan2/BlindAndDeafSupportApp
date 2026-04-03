@@ -28,6 +28,15 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </Link>
       
+
+      <Link href="/settings" push asChild>
+        <TouchableOpacity style={styles.bigButton}>
+          <Text style={styles.bigButtonText}>Settings</Text>
+          <View style={styles.iconHolder}>
+            <Feather name="message-square" size={40} color="white" />
+          </View>
+        </TouchableOpacity>
+      </Link>
     </View>
   );
 }

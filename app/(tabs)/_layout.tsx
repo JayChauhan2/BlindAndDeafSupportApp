@@ -82,7 +82,6 @@ export default function TabLayout() {
           ),
         }}
       />
-
       <Tabs.Screen
         name="textBot"
         options={{
@@ -101,5 +100,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+    
   );
 }

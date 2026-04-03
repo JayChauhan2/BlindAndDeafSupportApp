@@ -51,7 +51,7 @@ function RootLayoutNav() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ title: "Home", headerShown: false }} />
         <Stack.Screen name="speakWithBot" options={{ title: "" }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="settings" options={{ presentation: 'modal', title: "Settings" }} />
       </Stack>
     </ThemeProvider>
   );

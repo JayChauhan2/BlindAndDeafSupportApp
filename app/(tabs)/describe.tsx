@@ -141,6 +141,7 @@ export default function DescribeSceneComponent() {
           mute={false}
           responsiveOrientationWhenOrientationLocked
         />
+        <View><Text>adas</Text></View>
         <View style={styles.shutterContainer}>
           <Pressable onPress={pickImage}>
             <AntDesign name="picture" size={32} color="white" />
