@@ -12,7 +12,7 @@ export default function textBot() {
     const sendTextToBackend = async (user_text) => {
         
         setlistOfMessages(listOfMessages => [...listOfMessages, user_text]);
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         try {
             const response = await fetch(`${API_URL}/text-model`, {
                 method: 'POST',

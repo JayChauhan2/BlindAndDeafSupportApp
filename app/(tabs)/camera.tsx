@@ -2,6 +2,7 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
+import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {
@@ -26,36 +27,11 @@ export default function camera() {
   const [facing, setFacing] = useState<CameraType>("back");
   const [recording, setRecording] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [modelResponse, setModelResponse] = useState("");
 
-  const pickImage = async () => {
-    // No permissions request is necessary for launching the image library.
-    // Manually request permissions for videos on iOS when `allowsEditing` is set to `false`
-    // and `videoExportPreset` is `'Passthrough'` (the default), ideally before launching the picker
-    // so the app users aren't surprised by a system dialog after picking a video.
-    // See "Invoke permissions for videos" sub section for more details.
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-    if (!permissionResult.granted) {
-      Alert.alert('Permission required', 'Permission to access the media library is required.');
-      return;
-    }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images', 'videos'],
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-
-    if (!result.canceled) { //image has been selected!
-      setUri(result.assets[0].uri);
-      uploadImage(result.assets[0].uri);
-    }
-  };
 
   const uploadImage = async (imageUri) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const formData = new FormData();
 
     // Extract filename
@@ -80,9 +56,40 @@ export default function camera() {
       });
       const data = await response.json(); //stuff returned from backend
       Speech.speak(data.model_text_response); //say the response aloud
+      setModelResponse(data.model_text_response);
     } catch (error) {
       console.error('Error sending signal:', error);
       console.log('Failed to send signal. Check console and IP address.');
+    }
+  };
+
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library.
+    // Manually request permissions for videos on iOS when `allowsEditing` is set to `false`
+    // and `videoExportPreset` is `'Passthrough'` (the default), ideally before launching the picker
+    // so the app users aren't surprised by a system dialog after picking a video.
+    // See "Invoke permissions for videos" sub section for more details.
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert('Permission required', 'Permission to access the media library is required.');
+      return;
+    }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'], // no videos
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result);
+
+    if (!result.canceled) { //image has been selected!
+      setUri(result.assets[0].uri);
+      uploadImage(result.assets[0].uri);
     }
   };
 
@@ -122,6 +129,8 @@ export default function camera() {
 
   const toggleFacing = () => {
     setFacing((prev) => (prev === "back" ? "front" : "back"));
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const renderPicture = (uri: string) => {
@@ -183,7 +192,6 @@ export default function camera() {
           <SegmentedControl
             values={['Read', 'Describe']}
             selectedIndex={selectedIndex}
-            
             tintColor="#007AFF" // Selected segment background
             backgroundColor="rgba(255, 255, 255, 0)" // Inactive segments background
             style={{height: 40}}

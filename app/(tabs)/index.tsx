@@ -7,8 +7,14 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
       
+      <Link href="/settings" push asChild>
+        <TouchableOpacity style={styles.settings}>
+          <FontAwesome name="gear" size={40} color="black" />
+        </TouchableOpacity>
+      </Link>
+
+      <Text style={styles.title}>Home</Text>
       <Link href="/speakWithBot" push asChild>
         <TouchableOpacity style={styles.bigButton}>
           <Text style={styles.bigButtonText}>Speak with Zoe</Text>
@@ -29,14 +35,6 @@ export default function HomeScreen() {
       </Link>
       
 
-      <Link href="/settings" push asChild>
-        <TouchableOpacity style={styles.bigButton}>
-          <Text style={styles.bigButtonText}>Settings</Text>
-          <View style={styles.iconHolder}>
-            <Feather name="message-square" size={40} color="white" />
-          </View>
-        </TouchableOpacity>
-      </Link>
     </View>
   );
 }
@@ -46,6 +44,15 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  settings: {
+    height: 60,
+    width: 60,
+    borderWidth: 2,
+    borderColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    
   },
   title: {
     fontSize: 20,
