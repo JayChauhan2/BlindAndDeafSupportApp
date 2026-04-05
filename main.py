@@ -137,13 +137,35 @@ def return_text_response(content, request_type, image_query_type, user_location)
         save_history(history)
         return model_text_response, user_text
         
-    history['messages'].append({"role": "assistant", "content": model_text_response})
-    save_history(history)
+    # history['messages'].append({"role": "assistant", "content": model_text_response})
+    # save_history(history)
     return model_text_response
         
 @app.post("/text-model") #DONe
 async def text_model(data: TextData): #DOES
     model_text_response = return_text_response(data.message, "text", None, None)
+
+    #return "search" or "general"
+    completion = client.chat.completions.create(
+        model="meta-llama/llama-4-scout-17b-16e-instruct", #smaller model
+        messages=[
+            {
+                "role": "user",
+                "content": "Please take the following message and condense it as if it were being sent in a text message format. The message should still be formally formatted and written (for example nothing like 'How r u' should be said, emojis are fine however), but the message should not be very long due to the briskness found in text messages. Don't say anything else like 'okay here is your message' or the sort. Only say either one of the two words. Here is the message: " + model_text_response
+            }
+        ],
+        temperature=1,
+        max_completion_tokens=1024,
+        top_p=1,
+        stream=False,
+        stop=None
+    )
+
+    model_text_response=completion.choices[0].message.content
+
+    history = load_history()
+    history['messages'].append({"role": "assistant", "content": model_text_response})
+    save_history(history)
     return {"model_text_response": model_text_response}
 
 @app.post("/describe-scene") #Done
@@ -250,3 +272,23 @@ async def transcribe(file: UploadFile = File(...)):
     # messages.append({"role": "user", "content": user_text})
 
     return {"model_text_response": user_text}
+
+@app.post("/generate-init-message")
+async def generate_init_message():
+    completion = client.chat.completions.create(
+        model="meta-llama/llama-4-scout-17b-16e-instruct", #smaller model
+        messages=[
+            {
+                "role": "user",
+                "content": "Generate a nice, hype message to greet a user. Don't say anything else like 'okay here is your message' or the sort."
+            }
+        ],
+        temperature=1,
+        max_completion_tokens=1024,
+        top_p=1,
+        stream=False,
+        stop=None
+    )
+
+    model_text_response=completion.choices[0].message.content
+    return {"model_text_response": model_text_response}

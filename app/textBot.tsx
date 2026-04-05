@@ -5,6 +5,8 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
+
+
 export default function textBot() {
     const [text, setText] = useState('');
     const [listOfMessages, setlistOfMessages] = useState(["What's on your mind?"]);
@@ -74,16 +76,16 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 15,
         backgroundColor: 'rgba(255, 255, 255, 1)',
-        color: '#3b3b3b',
+        color: 'white',
 
     },
     evenText: {
-        backgroundColor: '#F0FFFF'
+        backgroundColor: '#0077b6',
     },
     oddText: {
         // left: 200
         alignSelf: 'flex-end',
-        backgroundColor: '#cefad0',
+        backgroundColor: '#006400',
     },
     scrollView: {
         padding: 6,
@@ -93,18 +95,17 @@ const styles = StyleSheet.create({
         backgroundColor: '#dfdfdf',
         padding: 10,
         flexDirection: 'row',
-        borderWidth: 2,
-        borderColor: 'green',
+        height: 50,
     },
     textBox: {
         borderRadius: 10,
         backgroundColor: 'white',
         padding: 6,
+        paddingTop: 10,
         minHeight: 40,
         flex: 2.5,
         maxHeight: 85,
         textAlignVertical: 'top',
-
     },
     sendButton: {
         flex: 0.6,

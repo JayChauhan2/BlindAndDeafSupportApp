@@ -14,6 +14,8 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
+
+
 export default function speakWithBot() {
 
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
@@ -22,8 +24,8 @@ export default function speakWithBot() {
   const [isPressed, setPressed] = useState(false);
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [listOfMessages, setlistOfMessages] = useState(["What's on your mind?", "What's on your mind?", "What's on your mind?","What's on your mind?", "What's on your mind?", "What's on your mind?","What's on your mind?", "What's on your mind?", "What's on your mind?"]);
-  
+  const [listOfMessages, setlistOfMessages] = useState([""]);
+
   const sendUserMessageToModel = async (recordingUri) => {
 
     const formData = new FormData();
@@ -104,6 +106,7 @@ export default function speakWithBot() {
       setLocation(location);
     })();
   }, []);
+  
 
   let text = 'Waiting...';
   if (errorMsg) {
@@ -114,17 +117,18 @@ export default function speakWithBot() {
 
   return (
     <View style={styles.container}>
-        <ScrollView style={styles.scrollView}>
+        <ScrollView style={styles.scrollView} contentContainerStyle={{ flexGrow: 1 }}>
           {listOfMessages.map((item, index) => (
             <Text key={index} style={[styles.baseText, index % 2 === 0 ? styles.evenText : styles.oddText]}>{item}</Text>
           ))}
+          <View style={{marginBottom: 250}}></View>
         </ScrollView>
 
       <LinearGradient
         // Fade from solid black to fully transparent
-        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,1)']}
+        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.8)', 'rgba(255,255,255,1)']}
         pointerEvents="none"
-        style={{ height: 80, width: '100%', position: 'absolute', bottom: 190}}
+        style={{ height: 340, width: '100%', position: 'absolute', bottom: 0}}
       />
       <View style={styles.buttonHolder}>
         <TouchableOpacity onPress={recorderState.isRecording ? stopRecording : record} style={isPressed ? styles.bigButton : styles.button}>
@@ -147,26 +151,29 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 15,
     backgroundColor: 'rgba(255, 255, 255, 1)',
-    color: '#3b3b3b',
+    color: 'white',
 
   },
   evenText: {
-    backgroundColor: '#F0FFFF'
+    backgroundColor: '#0077b6'
   },
   oddText: {
     // left: 200
     alignSelf: 'flex-end',
-    backgroundColor: '#cefad0',
+    backgroundColor: '#006400',
   },
   scrollView: {
     padding: 6,
     paddingTop: 20,
+    paddingBottom: 200
   },
   buttonHolder: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   button: { // maybe pentagon shape taking inspiration from something hmmm
-    backgroundColor: 'blue',
+    position: 'absolute',
+    bottom: 20,
+    backgroundColor: '#006400',
     height: 100,
     width: 100,
     justifyContent: 'center',
@@ -176,7 +183,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   bigButton: {
-    backgroundColor: 'blue',
     height: 200,
     width: 200,
     justifyContent: 'center',
