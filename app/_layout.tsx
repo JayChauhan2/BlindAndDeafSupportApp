@@ -1,4 +1,5 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+// import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import ThemeProvider from '@/components/ThemeContext';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
@@ -47,7 +48,7 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ title: "Home", headerShown: false }} />
         <Stack.Screen name="speakWithBot" options={{ title: "" }} />

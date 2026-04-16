@@ -1,42 +1,56 @@
-import { Text, View } from '@/components/Themed';
+// import { Text, View } from '@/components/Themed';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Link } from 'expo-router';
-import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useContext } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { ThemeContext } from '@/components/ThemeContext';
+import { Colors } from '@/constants/Colors';
 
 export default function HomeScreen() {
+
+  const { currentTheme } = useContext(ThemeContext);
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: currentTheme === "dark" ? Colors.darkBg : Colors.lightBg}]}>
 
       <View style={styles.settingsHolder}>
-        <Link href="/settings" push asChild>
-          <TouchableOpacity style={styles.settings} onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-            <FontAwesome name="gear" size={40} color="black" />
+          <TouchableOpacity style={[styles.settings, {borderColor: currentTheme === "dark" ? Colors.lightBg : Colors.darkBg}]} >
+          <Link href="/settings" push asChild onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+            <FontAwesome name="gear" size={40} color={currentTheme === "dark" ? Colors.lightBg : Colors.darkBg} />
+          </Link>
           </TouchableOpacity>
-        </Link>
       </View>
 
-      <Text style={styles.title}>Welcome, Name</Text>
+      <Text style={[styles.title, {color: currentTheme === "dark" ? Colors.lightBg : Colors.darkBg}]}>Welcome, Name</Text>
+      
+      {/* ITS THE FREAKING LINK ELEMENT THATS CAUSING THINGS TO BREAK. IM GONNA BREAK ITS NECK. */}
+        {/* <TouchableOpacity  onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}> */}
 
-      <Link href="/speakWithBot" push asChild>
-        <TouchableOpacity style={styles.bigButton} onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-          <Text style={styles.bigButtonText}>Speak with Zoe</Text>
+        <Link href="/speakWithBot" push asChild style={[styles.bigButton, {zIndex: 20000, backgroundColor: currentTheme === "dark" ? Colors.lightBg : Colors.userValue}, {justifyContent: 'space-between',}]}>
+          <View> 
+          <Text style={[styles.bigButtonText, {color: currentTheme === "dark" ? Colors.userValue : Colors.lightBg}]}>Speak with Zoe</Text>
           <View style={styles.iconHolder}>
-            <FontAwesome name="microphone" size={40} color="white" />
+            <FontAwesome name="microphone" size={40} color={currentTheme === "dark" ? Colors.userValue : Colors.lightBg} />
           </View>
-        </TouchableOpacity>
-      </Link>
+          </View>
+        </Link>
+        
+        {/* </TouchableOpacity> */}
       
 
-      <Link href="/textBot" push asChild>
-        <TouchableOpacity style={styles.bigButton} onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
-          <Text style={styles.bigButtonText}>Text Zoe</Text>
+      
+        <TouchableOpacity style={[styles.bigButton, {backgroundColor: currentTheme === "dark" ? Colors.lightBg : Colors.userValue}]} onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}>
+          <Link href="/textBot" push asChild style={{justifyContent: 'space-between', height: "100%"}}>
+          <View>
+          <Text style={[styles.bigButtonText, {color: currentTheme === "dark" ? Colors.userValue : Colors.lightBg}]}>Text Zoe</Text>
           <View style={styles.iconHolder}>
-            <Feather name="message-square" size={40} color="white" />
+            <Feather name="message-square" size={40} color={currentTheme === "dark" ? Colors.userValue : Colors.lightBg} />
           </View>
+          </View>
+          </Link>
         </TouchableOpacity>
-      </Link>
       
 
     </View>
@@ -52,11 +66,11 @@ const styles = StyleSheet.create({
   settings: {
     height: 60,
     width: 60,
-    borderWidth: 2,
-    borderColor: 'black',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 200,
+    borderWidth: 2,
+    borderColor: 'black'
   },
   settingsHolder: {
     top: -25,
@@ -75,7 +89,6 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 16,
     borderRadius: 20,
-    justifyContent: 'space-between'
   },
   iconHolder: {
     display: 'flex',
