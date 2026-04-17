@@ -28,6 +28,7 @@ export default function TabLayout() {
         },
         tabBarStyle: { backgroundColor: currentTheme === 'dark' ? Colors.darkGray : Colors.lightGray } 
       }}>
+        {/* a */}
       <Tabs.Screen
         name="index"
         options={{
