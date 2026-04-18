@@ -14,8 +14,6 @@ import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'rea
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
-
-
 export default function speakWithBot() {
 
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
@@ -24,7 +22,7 @@ export default function speakWithBot() {
   const [isPressed, setPressed] = useState(false);
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [listOfMessages, setlistOfMessages] = useState([""]);
+  const [listOfMessages, setlistOfMessages] = useState(["Hey! How's your day going?"]);
 
   const sendUserMessageToModel = async (recordingUri) => {
 
@@ -51,7 +49,7 @@ export default function speakWithBot() {
 
       const data = await response.json(); //stuff returned from backend
       //order matters
-      Speech.speak(data.model_text_response); //say the response aloud
+      // Speech.speak(data.model_text_response); //say the response aloud
       setlistOfMessages([...listOfMessages, data.user_text, data.model_text_response])
     } catch (error) {
       console.error('Error sending signal:', error);
@@ -131,7 +129,7 @@ export default function speakWithBot() {
         style={{ height: 340, width: '100%', position: 'absolute', bottom: 0}}
       />
       <View style={styles.buttonHolder}>
-        <TouchableOpacity onPress={recorderState.isRecording ? stopRecording : record} style={isPressed ? styles.bigButton : styles.button}>
+        <TouchableOpacity onPress={recorderState.isRecording ? stopRecording : record} style={styles.button}>
         <FontAwesome name={recorderState.isRecording ? 'check' : "microphone"} size={50} color="white" />
       </TouchableOpacity></View>
       
@@ -180,15 +178,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 200,
     marginBottom: 80,
-    marginTop: 10,
-  },
-  bigButton: {
-    height: 200,
-    width: 200,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 200,
-    marginBottom: 60,
     marginTop: 10,
   },
   buttonText: {

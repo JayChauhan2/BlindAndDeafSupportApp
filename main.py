@@ -35,6 +35,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.post("/transcribe")
+async def transcribe_audio(file: UploadFile = File(...)):
+    # Save temporary chunk
+    temp_filename = f"temp_{file.filename}"
+    with open(temp_filename, "wb") as f:
+        f.write(await file.read())
+    
+    # Transcribe with Groq Whisper
+    with open(temp_filename, "rb") as audio_file:
+        transcription = client.audio.transcriptions.create(
+            file=(temp_filename, audio_file.read()),
+            model="whisper-large-v3",
+            response_format="text"
+        )
+    
+    os.remove(temp_filename)
+    return {"text": transcription}
+
 def load_history():
     if os.path.exists(HISTORY_FILE):
         with open(HISTORY_FILE, 'r') as f:
@@ -292,3 +311,4 @@ async def generate_init_message():
 
     model_text_response=completion.choices[0].message.content
     return {"model_text_response": model_text_response}
+
