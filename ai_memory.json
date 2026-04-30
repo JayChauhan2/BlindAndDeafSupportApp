@@ -179,6 +179,14 @@
     {
       "role": "assistant",
       "content": "I'm great, thanks! \ud83d\ude0a Ready to chat. How about you?"
+    },
+    {
+      "role": "user",
+      "content": " Hey, my day is going pretty well. What about you?If relevant, the user's location is No location provided"
+    },
+    {
+      "role": "assistant",
+      "content": "I'm doing well, thanks for asking! I'm a large language model, so I don't have feelings or emotions like humans do, but I'm always happy to chat and help with any questions you have! \ud83d\ude0a What's been the highlight of your day so far?"
     }
   ]
 }

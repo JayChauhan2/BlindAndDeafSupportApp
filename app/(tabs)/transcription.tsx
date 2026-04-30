@@ -1,6 +1,7 @@
 import { Audio } from 'expo-av';
+import { LinearGradient } from 'expo-linear-gradient'; // or 'react-native-linear-gradient'
 import React, { useState } from 'react';
-import { Button, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
@@ -43,9 +44,18 @@ export default function transcription() {
   }
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button title="Start Transcribing" onPress={startRecording} />
-      <Text>{transcript}</Text>
+    <View style={{ flex: 1, justifyContent: 'center', backgroundColor: '#141414', paddingTop: 20 }}>
+      <Pressable onPress={startRecording} style={{height: 40, width: 200, position: 'absolute', zIndex: 20, bottom: 2, alignSelf: 'center'}}><Text style={{color: '#4055F2', fontSize: 20,}}>Start Transcribing</Text></Pressable>
+      
+      <LinearGradient
+        // Fade from solid black to fully transparent
+        colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0.9)']}
+        pointerEvents="none"
+        style={{ height: 80, width: '100%', position: 'absolute', bottom: 0}}
+      />
+      <ScrollView style={{height: 20, paddingTop: 20,}}>
+        <Text style={{color: 'white', fontSize: 20, padding: 10}}>{transcript}</Text>
+      </ScrollView>
     </View>
   );
 }

@@ -19,12 +19,11 @@ export default function TabLayout() {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: false,
-        tabBarActiveTintColor: Colors.lightBg,
-        tabBarInactiveTintColor: Colors.darkBg,
+        tabBarActiveTintColor: '#0077b6',
+        tabBarInactiveTintColor: 'gray',
         tabBarLabelStyle: {
           fontSize: 16, // Set your desired font size here
           fontWeight: 'bold',
-          color: currentTheme === 'dark' ? 'red' : Colors.lightBg
         },
         tabBarStyle: { backgroundColor: currentTheme === 'dark' ? Colors.darkGray : Colors.lightGray } 
       }}>
@@ -35,7 +34,7 @@ export default function TabLayout() {
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name={focused ? 'home' : 'home-outline'}
-              color={focused ? Colors.lightBg : '#B7B7B3'} 
+              color={focused ? '#0077b6' : 'gray'} 
               size={28}
             />
           ),
@@ -49,7 +48,20 @@ export default function TabLayout() {
           tabBarIcon: ({ focused}) => (
             <Ionicons
               name={focused ? 'camera' : 'camera-outline'}
-              color={focused ? Colors.lightBg : '#B7B7B3'}
+              color={focused ? '#0077b6' : '#gray'} 
+              size={28}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="transcription"
+        options={{
+          title: 'Transcribe',
+          tabBarIcon: ({ focused}) => (
+            <Ionicons
+              name={focused ? 'ear' : 'ear-outline'}
+              color={focused ? '#0077b6' : '#gray'} 
               size={28}
             />
           ),

@@ -13,6 +13,7 @@ from pydantic import BaseModel
 from typing import Annotated
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -35,6 +36,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
+class ProximityData(BaseModel):
+    distance: float  # cm
+    object_id: str
+
+@app.post("/analyze-distance")
+async def analyze_distance(data: ProximityData):
+    # Determine haptic intensity based on proximity
+    intensity = "light"
+    if data.distance < 10:
+        intensity = "heavy"
+    elif data.distance < 30:
+        intensity = "medium"
+    
+    return {"intensity": intensity, "object_id": data.object_id}
 
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):

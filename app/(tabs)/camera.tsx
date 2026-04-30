@@ -29,7 +29,6 @@ export default function camera() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [modelResponse, setModelResponse] = useState("");
 
-
   const uploadImage = async (imageUri) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     const formData = new FormData();
@@ -55,6 +54,7 @@ export default function camera() {
         },
       });
       const data = await response.json(); //stuff returned from backend
+      console.log(data.model_text_response)
       Speech.speak(data.model_text_response); //say the response aloud
       setModelResponse(data.model_text_response);
     } catch (error) {
@@ -135,7 +135,7 @@ export default function camera() {
 
   const renderPicture = (uri: string) => {
     return (
-      <View>
+      <View style={{flex: 1, backgroundColor: 'lightblue'}}>
         <Image
           source={{ uri }}
           contentFit="contain"
