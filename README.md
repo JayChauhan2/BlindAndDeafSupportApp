@@ -2,7 +2,7 @@
 
 ScriptR is a free and open source accessibility app for blind and deaf people. It bridges the gap between navigating apps online and understanding that information on the user's end.
 
-Over 94% of the top one million websites lack an accessibility feature (including proper contrast). In addition, iOS lacks support in live captioning for multiple languages, which inhibits the abilities of deaf users. However, ScriptR solves this problem by creating a universal application (Android + iOS) that live transcribes in 90+ languages.
+Over 94% of the top one million websites lack an accessibility feature, including proper contrast (source: https://beaccessible.com/post/disability-statistics/). In addition, iOS lacks support in live captioning for multiple languages, which inhibits the abilities of deaf users. However, ScriptR solves this problem by creating a universal application (Android + iOS) that live transcribes in 90+ languages.
 
 ## How ScriptR Works
 
@@ -16,4 +16,4 @@ Web Content Accessibility Guidelines (WCAG): ScriptR is easy to use for all user
 
 We worked closely with Ms. Theresa Halpin, a senior advisor at the Federal Reserve who is an accessibility advocate and product owner. She provided numerous resources to us along our development journey that aided our app development.
 
-## Thank You!
+# Thank You!
