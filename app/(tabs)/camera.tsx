@@ -135,13 +135,18 @@ export default function camera() {
 
   const renderPicture = (uri: string) => {
     return (
-      <View style={{flex: 1, backgroundColor: 'lightblue'}}>
-        <Image
+      <View style={{flex: 1, alignItems: 'center', flexDirection: 'column', justifyContent: 'center', backgroundColor: 'none'}}>
+        <View>
+          <Image
           source={{ uri }}
           contentFit="contain"
           style={{ width: 300, aspectRatio: 1 }}
-        />
-        <Button onPress={() => {setUri(""); Speech.stop();}} title="Take another picture" />
+          />
+          <Button onPress={() => {setUri(""); Speech.stop(); setModelResponse("")}} title="Take another picture" />
+          </View>
+          <View>
+            <Text>{modelResponse}</Text>
+          </View>
       </View>
     );
   };
@@ -194,9 +199,9 @@ export default function camera() {
             values={['Read', 'Describe']}
             selectedIndex={selectedIndex}
             tintColor="#007AFF" // Selected segment background
-            backgroundColor="rgba(255, 255, 255, 0)" // Inactive segments background
-            style={{height: 40}}
-            fontStyle={{ color: '#bcbcbc', fontSize: 20 }} // Unselected text color
+            backgroundColor="rgb(0, 0, 0, 1)" // Inactive segments background
+            style={{height: 40, borderRadius: 200}}
+            fontStyle={{ color: '#bcbcbc', fontSize: 20, }} // Unselected text color
             activeFontStyle={{ color: 'rgb(255, 255, 255)', fontSize: 20 }} // Selected text color
             onChange={(event) => {
               setSelectedIndex(event.nativeEvent.selectedSegmentIndex);

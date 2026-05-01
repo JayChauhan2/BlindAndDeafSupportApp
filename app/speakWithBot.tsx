@@ -32,7 +32,7 @@ export default function speakWithBot() {
     const uriParts = recordingUri.split('/');
     const fileName = uriParts[uriParts.length - 1];
 
-    // formData.append('user_location', "User latitude is " + location?.coords.latitude + ". User longitude is " + location?.coords.longitude);
+    formData.append('user_location', "User latitude is " + location?.coords.latitude + ". User longitude is " + location?.coords.longitude);
     console.log("user location is : " + location?.coords);
     
     formData.append('file', {
@@ -49,7 +49,7 @@ export default function speakWithBot() {
 
       const data = await response.json(); //stuff returned from backend
       //order matters
-      // Speech.speak(data.model_text_response); //say the response aloud
+      Speech.speak(data.model_text_response); //say the response aloud
       setlistOfMessages([...listOfMessages, data.user_text, data.model_text_response])
     } catch (error) {
       console.error('Error sending signal:', error);

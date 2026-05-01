@@ -1,6 +1,7 @@
 import { Text, View } from '@/components/Themed';
 import { Feather, FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
@@ -14,12 +15,12 @@ export default function HomeScreen() {
           <FontAwesome name="gear" size={40} color="black" />
         </TouchableOpacity>
       </Link> */}
-
+      <StatusBar style="dark" />
       {/* Speak Mode */}
       <Text style={styles.title}>Home</Text>
       <Link href="/speakWithBot" push asChild>
         <TouchableOpacity style={styles.bigButton}>
-          <Text style={styles.bigButtonText}>Speak Mode</Text>
+          <Text style={styles.bigButtonText}>Speak with Clara</Text>
           <View style={styles.iconHolder}>
             <FontAwesome name="microphone" size={40} color="white" />
           </View>
@@ -29,7 +30,7 @@ export default function HomeScreen() {
       {/* Text Mode */}
       <Link href="/textBot" push asChild>
         <TouchableOpacity style={styles.bigButton}>
-          <Text style={styles.bigButtonText}>Text Mode</Text>
+          <Text style={styles.bigButtonText}>Text Clara</Text>
           <View style={styles.iconHolder}>
             <Feather name="message-square" size={40} color="white" />
           </View>

@@ -5,8 +5,6 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
-
-
 export default function textBot() {
     const [text, setText] = useState('');
     const [listOfMessages, setlistOfMessages] = useState(["What's on your mind?"]);
@@ -43,9 +41,8 @@ export default function textBot() {
                 <Text key={index} style={[styles.baseText, index % 2 === 0 ? styles.evenText : styles.oddText]}>{item}</Text>
                 ))}
             </ScrollView>
-
+            
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.textBoxHolder}>
-                
                 <TextInput
                 placeholder="Type away..."
                 onChangeText={newText => setText(newText)}
@@ -58,6 +55,20 @@ export default function textBot() {
                     <Ionicons name="send" size={30} color="black" />
                 </Pressable>
             </KeyboardAvoidingView>
+
+            {/* <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.textBoxHolder}>
+                <TextInput
+                placeholder="Type away..."
+                onChangeText={newText => setText(newText)}
+                defaultValue={text}
+                multiline={true}
+                onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}}
+                style={[styles.textBox]} //minimum height
+                />
+                <Pressable onPress={() => sendTextToBackend(text)} style={({ pressed }) => [{ backgroundColor: pressed ? '#8bae8d' : '#8ed792' }, styles.sendButton]}>
+                    <Ionicons name="send" size={30} color="black" />
+                </Pressable>
+            </KeyboardAvoidingView> */}
         
         </View>
     );
@@ -85,11 +96,13 @@ const styles = StyleSheet.create({
     oddText: {
         // left: 200
         alignSelf: 'flex-end',
-        backgroundColor: '#006400',
+        backgroundColor: '#8dd18d',
     },
     scrollView: {
         padding: 6,
-        marginTop: 50,
+        borderColor: 'red',
+        borderWidth: 2,
+        flex: 1
     },
     textBoxHolder: {
         backgroundColor: '#dfdfdf',

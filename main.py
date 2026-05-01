@@ -79,7 +79,7 @@ def save_history(history):
     with open(HISTORY_FILE, 'w') as f:
         json.dump(history, f, indent=2) # Use indent for readability
 
-def search_intent_or_not(user_msg, message_history):
+def search_intent_or_not(user_msg, message_history, location):
     #return "search" or "general"
     completion = client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct", #smaller model
@@ -112,7 +112,7 @@ def search_intent_or_not(user_msg, message_history):
         model_response=completion.choices[0].message.content
     elif user_message_intent == "search": #search query
         response = tavily.search(
-            query=user_msg,
+            query=user_msg + ". If relevant, the user's location is the following coordinates. Do not say these coordinates back to the user, but you are allowed to tell them their location exactly. " + location,
             include_answer="basic",
             search_depth="advanced"
         )
@@ -131,7 +131,7 @@ def return_text_response(content, request_type, image_query_type, user_location)
 
     if request_type == "text": #text query
         history['messages'].append({"role": "user", "content": content})
-        model_text_response = search_intent_or_not(content, history['messages'])
+        model_text_response = search_intent_or_not(content, history['messages'], "None provided")
     elif request_type == "image": #image uploaded
         base_64_img=content
         model_prompt=""
@@ -162,12 +162,12 @@ def return_text_response(content, request_type, image_query_type, user_location)
                 temperature=0,
                 response_format="verbose_json",
             )
-            user_text = transcription.text + "If relevant, the user's location is " + user_location
+            user_text = transcription.text # + "If relevant, the user's location is " + user_location
             messages.append({"role": "user", "content": user_text})
         
         # append my message to history
         history['messages'].append({"role": "user", "content": user_text})
-        model_text_response = search_intent_or_not(user_text, history['messages'])
+        model_text_response = search_intent_or_not(user_text, history['messages'], user_location)
 
         # append model's message to history
         history['messages'].append({"role": "assistant", "content": model_text_response})
@@ -178,7 +178,7 @@ def return_text_response(content, request_type, image_query_type, user_location)
         
 @app.post("/text-model") 
 async def text_model(data: TextData):
-    model_text_response = return_text_response(data.message, "text", None, None)
+    model_text_response = return_text_response(data.message, "text", None, "None provided")
 
     #message condenser
     completion = client.chat.completions.create(
@@ -226,7 +226,7 @@ async def describe_scene(file: UploadFile = File(...)):
     with open(image_path, "rb") as image_file:
         base_64_img=base64.b64encode(image_file.read()).decode('utf-8')
 
-    model_text_response=return_text_response(base_64_img, "image", "describe", None)
+    model_text_response=return_text_response(base_64_img, "image", "describe", "None provided")
 
     return {"model_text_response": model_text_response}
 
@@ -253,7 +253,7 @@ async def read_text(file: UploadFile = File(...)):
     with open(image_path, "rb") as image_file:
         base_64_img=base64.b64encode(image_file.read()).decode('utf-8')
     
-    model_text_response=return_text_response(base_64_img, "image", "read", None)
+    model_text_response=return_text_response(base_64_img, "image", "read", "None provided")
 
     return {"model_text_response": model_text_response}
 
