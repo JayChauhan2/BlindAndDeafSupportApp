@@ -1,4 +1,3 @@
-// you left off trying to figure out how to create stack whenever user presses the click button camera
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import SegmentedControl from '@react-native-segmented-control/segmented-control';
@@ -45,6 +44,7 @@ export default function camera() {
 
     const url = selectedIndex === 0 ? 'read-text' : 'describe-scene';
     
+    // send request to API 
     try {
       const response = await fetch(`${API_URL}/` + url, {
         method: 'POST',
@@ -65,11 +65,7 @@ export default function camera() {
 
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library.
-    // Manually request permissions for videos on iOS when `allowsEditing` is set to `false`
-    // and `videoExportPreset` is `'Passthrough'` (the default), ideally before launching the picker
-    // so the app users aren't surprised by a system dialog after picking a video.
-    // See "Invoke permissions for videos" sub section for more details.
+    // Get users permissions to access their library
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permissionResult.granted) {
@@ -77,7 +73,9 @@ export default function camera() {
       return;
     }
 
+    // Haptic alert
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'], // no videos
       allowsEditing: true,
@@ -97,6 +95,7 @@ export default function camera() {
     return null;
   }
 
+  // alert user of granting permission
   if (!permission.granted) {
     return (
       <View style={styles.container}>
@@ -127,6 +126,7 @@ export default function camera() {
     console.log({ video });
   };
 
+  // switching from front to back camera and vice versa
   const toggleFacing = () => {
     setFacing((prev) => (prev === "back" ? "front" : "back"));
 
@@ -187,7 +187,8 @@ export default function camera() {
             <FontAwesome6 name="rotate-left" size={32} color="white" />
           </Pressable>
         </View>
-
+        
+        {/* toggling between read and describe mode */}
         <View style={styles.toggleHolder}>
           <SegmentedControl
             values={['Read', 'Describe']}

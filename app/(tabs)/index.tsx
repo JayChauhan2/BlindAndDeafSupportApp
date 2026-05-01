@@ -7,13 +7,15 @@ import { StyleSheet, TouchableOpacity } from 'react-native';
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-{/*       
+      
+      {/*       
       <Link href="/settings" push asChild>
         <TouchableOpacity style={styles.settings}>
           <FontAwesome name="gear" size={40} color="black" />
         </TouchableOpacity>
       </Link> */}
 
+      {/* Speak Mode */}
       <Text style={styles.title}>Home</Text>
       <Link href="/speakWithBot" push asChild>
         <TouchableOpacity style={styles.bigButton}>
@@ -24,7 +26,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </Link>
       
-
+      {/* Text Mode */}
       <Link href="/textBot" push asChild>
         <TouchableOpacity style={styles.bigButton}>
           <Text style={styles.bigButtonText}>Text Mode</Text>

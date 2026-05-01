@@ -36,8 +36,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-
 class ProximityData(BaseModel):
     distance: float  # cm
     object_id: str
@@ -55,12 +53,12 @@ async def analyze_distance(data: ProximityData):
 
 @app.post("/transcribe")
 async def transcribe_audio(file: UploadFile = File(...)):
-    # Save temporary chunk
+    # save temporary chunk
     temp_filename = f"temp_{file.filename}"
     with open(temp_filename, "wb") as f:
         f.write(await file.read())
     
-    # Transcribe with Groq Whisper
+    # transcribe with Groq Whisper
     with open(temp_filename, "rb") as audio_file:
         transcription = client.audio.transcriptions.create(
             file=(temp_filename, audio_file.read()),
@@ -104,7 +102,7 @@ def search_intent_or_not(user_msg, message_history):
     if user_message_intent == "general": # Model text response
         completion = client.chat.completions.create(
             model="meta-llama/llama-4-scout-17b-16e-instruct",
-            messages=message_history, #gotta change this to take in the json file
+            messages=message_history, 
             temperature=1,
             max_completion_tokens=1024,
             top_p=1,
@@ -129,7 +127,8 @@ def return_text_response(content, request_type, image_query_type, user_location)
 
     history = load_history()
 
-    model_text_response="Skibidi ding dong" #you KNOW you did something wrong if you hear this
+    model_text_response="random message" #you KNOW you did something wrong if you hear this
+
     if request_type == "text": #text query
         history['messages'].append({"role": "user", "content": content})
         model_text_response = search_intent_or_not(content, history['messages'])
@@ -166,22 +165,22 @@ def return_text_response(content, request_type, image_query_type, user_location)
             user_text = transcription.text + "If relevant, the user's location is " + user_location
             messages.append({"role": "user", "content": user_text})
         
+        # append my message to history
         history['messages'].append({"role": "user", "content": user_text})
         model_text_response = search_intent_or_not(user_text, history['messages'])
 
-        history['messages'].append({"role": "assistant", "content": model_text_response}) #temporary because I'm lazy
+        # append model's message to history
+        history['messages'].append({"role": "assistant", "content": model_text_response})
         save_history(history)
         return model_text_response, user_text
-        
-    # history['messages'].append({"role": "assistant", "content": model_text_response})
-    # save_history(history)
+    
     return model_text_response
         
-@app.post("/text-model") #DONe
-async def text_model(data: TextData): #DOES
+@app.post("/text-model") 
+async def text_model(data: TextData):
     model_text_response = return_text_response(data.message, "text", None, None)
 
-    #return "search" or "general"
+    #message condenser
     completion = client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct", #smaller model
         messages=[
@@ -204,14 +203,14 @@ async def text_model(data: TextData): #DOES
     save_history(history)
     return {"model_text_response": model_text_response}
 
-@app.post("/describe-scene") #Done
+@app.post("/describe-scene")
 async def describe_scene(file: UploadFile = File(...)):
     image_path = Path.cwd() / file.filename
 
     try: # may want to find somewhere else to save these files
-        # Open a file in write-binary mode and use the uploaded file's data
+        # open a file in write-binary mode and use the uploaded file's data
         with open(file.filename, "wb") as buffer:
-            # Efficiently stream the file in chunks to disk
+            # efficiently stream the file in chunks to disk
             shutil.copyfileobj(file.file, buffer)
     except Exception as e:
         return {"message": f"There was an error uploading the file: {e}"}
@@ -231,7 +230,7 @@ async def describe_scene(file: UploadFile = File(...)):
 
     return {"model_text_response": model_text_response}
 
-@app.post("/read-text") #Done
+@app.post("/read-text")
 async def read_text(file: UploadFile = File(...)):
     image_path = Path.cwd() / file.filename
 
@@ -258,7 +257,7 @@ async def read_text(file: UploadFile = File(...)):
 
     return {"model_text_response": model_text_response}
 
-@app.post("/speak-with-model") #speak with model
+@app.post("/speak-with-model")
 async def speak_with_model(file: UploadFile = File(...), user_location: Annotated[str, Form()] = "No location provided"):
 
     file_path = os.path.join(Path.cwd(), file.filename)
@@ -305,10 +304,10 @@ async def transcribe(file: UploadFile = File(...)):
         user_text = transcription.text
         print("User text-----------")
         print(user_text)
-    # messages.append({"role": "user", "content": user_text})
 
     return {"model_text_response": user_text}
 
+# Introductory message for a user
 @app.post("/generate-init-message")
 async def generate_init_message():
     completion = client.chat.completions.create(

@@ -13,11 +13,10 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
+    // Set the different tabs of our application
     <Tabs
+      // screenoptions for customizing colors and style
       screenOptions={{
-        // tabBarActiveTintColor: Colors[colorScheme].tint,
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
         headerShown: false,
         tabBarActiveTintColor: '#0077b6',
         tabBarInactiveTintColor: 'gray',
