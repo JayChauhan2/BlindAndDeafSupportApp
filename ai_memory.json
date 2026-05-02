@@ -1,4 +1,8 @@
 {
   "messages": [
+    {
+      "role": "assistant",
+      "content": "My name is Clara. Nice to meet you!"
+    }
   ]
 }

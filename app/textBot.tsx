@@ -33,6 +33,7 @@ export default function textBot() {
     };
 
     return (
+        
         <View style={styles.container}>
 
             <ScrollView style={styles.scrollView}>
@@ -55,7 +56,6 @@ export default function textBot() {
                 </Pressable>
             </KeyboardAvoidingView>
 
-        
         </View>
     );
 }

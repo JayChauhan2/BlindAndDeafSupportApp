@@ -22,6 +22,7 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 tavily = TavilyClient(api_key=os.getenv("TAVILY_KEY"))
 
 app = FastAPI()
+user_coordinates = "None provided" #Store user location in backend memory
 
 class TextData(BaseModel):
     message: str
@@ -131,7 +132,7 @@ def return_text_response(content, request_type, image_query_type, user_location)
 
     if request_type == "text": #text query
         history['messages'].append({"role": "user", "content": content})
-        model_text_response = search_intent_or_not(content, history['messages'], "None provided")
+        model_text_response = search_intent_or_not(content, history['messages'], user_coordinates)
     elif request_type == "image": #image uploaded
         base_64_img=content
         model_prompt=""
@@ -168,6 +169,7 @@ def return_text_response(content, request_type, image_query_type, user_location)
         # append my message to history
         history['messages'].append({"role": "user", "content": user_text})
         model_text_response = search_intent_or_not(user_text, history['messages'], user_location)
+        user_coordinates=user_location
 
         # append model's message to history
         history['messages'].append({"role": "assistant", "content": model_text_response})
