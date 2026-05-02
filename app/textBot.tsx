@@ -10,7 +10,7 @@ export default function textBot() {
     const [listOfMessages, setlistOfMessages] = useState(["What's on your mind?"]);
 
     const sendTextToBackend = async (user_text) => {
-        
+        setText("")
         setlistOfMessages(listOfMessages => [...listOfMessages, user_text]);
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         try {
@@ -35,13 +35,12 @@ export default function textBot() {
     return (
         
         <View style={styles.container}>
-
             <ScrollView style={styles.scrollView}>
                 {listOfMessages.map((item, index) => (
                 <Text key={index} style={[styles.baseText, index % 2 === 0 ? styles.evenText : styles.oddText]}>{item}</Text>
                 ))}
+
             </ScrollView>
-            
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.textBoxHolder}>
                 <TextInput
                 placeholder="Type away..."
@@ -66,6 +65,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
+        backgroundColor: '#dfdfdf'
     },
     baseText: {
         fontSize: 16,
@@ -82,19 +82,16 @@ const styles = StyleSheet.create({
     oddText: {
         // left: 200
         alignSelf: 'flex-end',
-        backgroundColor: '#8dd18d',
+        backgroundColor: '#0e583d',
     },
     scrollView: {
         padding: 6,
-        borderColor: 'red',
-        borderWidth: 2,
-        flex: 1
     },
     textBoxHolder: {
         backgroundColor: '#dfdfdf',
         padding: 10,
         flexDirection: 'row',
-        height: 50,
+        marginBottom: 100,
     },
     textBox: {
         borderRadius: 10,
