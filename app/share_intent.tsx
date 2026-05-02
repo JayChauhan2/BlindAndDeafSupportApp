@@ -1,9 +1,9 @@
 import { Button, Image, StyleSheet, Text, View } from "react-native";
 
 import {
-    ShareIntent,
-    ShareIntentFile,
-    useShareIntent,
+  ShareIntent,
+  ShareIntentFile,
+  useShareIntent,
 } from "expo-share-intent";
 import { Fragment } from "react";
 
@@ -94,7 +94,7 @@ export default function App() {
             <Image source={{ uri: file.path }} style={[styles.image]} />
           )}
 
-            <Button title="Hello" onPress={() => uploadImage(file.path)}></Button> {/* YOU LEFT OFF HERE! You were next going to try to get the app on your PHONE (build to phone) instead of ios*/}
+            <Button title="Hello" onPress={() => uploadImage(file.path)}></Button>
           <FileMeta file={file} />
         </Fragment>
       ))}

@@ -14,7 +14,7 @@ import { Image } from "expo-image";
 import * as ImagePicker from 'expo-image-picker';
 import * as Speech from 'expo-speech';
 import { useRef, useState } from "react";
-import { Alert, Button, Pressable, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
@@ -135,7 +135,7 @@ export default function camera() {
 
   const renderPicture = (uri: string) => {
     return (
-      <View style={{flex: 1, alignItems: 'center', flexDirection: 'column', justifyContent: 'center', backgroundColor: 'none'}}>
+      <View style={{flex: 1, paddingTop: 200, backgroundColor: "#eaeaea",alignItems: 'center', flexDirection: 'column', justifyContent: 'center', backgroundColor: 'none'}}>
         <View>
           <Image
           source={{ uri }}
@@ -144,9 +144,9 @@ export default function camera() {
           />
           <Button onPress={() => {setUri(""); Speech.stop(); setModelResponse("")}} title="Take another picture" />
           </View>
-          <View>
+          <ScrollView>
             <Text>{modelResponse}</Text>
-          </View>
+          </ScrollView>
       </View>
     );
   };

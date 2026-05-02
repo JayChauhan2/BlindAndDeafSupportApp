@@ -46,7 +46,7 @@ export default function transcription() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', backgroundColor: '#141414', paddingTop: 20 }}>
       <StatusBar style="light" />
-      <Pressable onPress={startRecording} style={{height: 40, width: 200, position: 'absolute', zIndex: 20, bottom: 2, alignSelf: 'center'}}><Text style={{color: 'white', fontSize: 16, fontWeight: 'bold'}}>Start Transcribing</Text></Pressable>
+      <Pressable onPress={startRecording} style={{height: 40, width: 200, position: 'absolute', zIndex: 20, bottom: 2, alignSelf: 'center'}}><Text style={{color: '#141414', fontSize: 16, fontWeight: 'bold', backgroundColor: 'white', paddingLeft: 8, borderRadius: 10, paddingTop: 8, paddingBottom: 8}}>Start Transcribing</Text></Pressable>
       
       <ScrollView style={{height: 20, paddingTop: 20,}}>
         <Text style={{color: 'white', fontSize: 20, padding: 10}}>{transcript}</Text>

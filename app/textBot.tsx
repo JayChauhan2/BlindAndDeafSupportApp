@@ -33,7 +33,6 @@ export default function textBot() {
     };
 
     return (
-        // <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
 
             <ScrollView style={styles.scrollView}>
@@ -56,19 +55,6 @@ export default function textBot() {
                 </Pressable>
             </KeyboardAvoidingView>
 
-            {/* <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.textBoxHolder}>
-                <TextInput
-                placeholder="Type away..."
-                onChangeText={newText => setText(newText)}
-                defaultValue={text}
-                multiline={true}
-                onPress={() => {Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}}
-                style={[styles.textBox]} //minimum height
-                />
-                <Pressable onPress={() => sendTextToBackend(text)} style={({ pressed }) => [{ backgroundColor: pressed ? '#8bae8d' : '#8ed792' }, styles.sendButton]}>
-                    <Ionicons name="send" size={30} color="black" />
-                </Pressable>
-            </KeyboardAvoidingView> */}
         
         </View>
     );

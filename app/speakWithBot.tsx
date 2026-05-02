@@ -16,6 +16,7 @@ const API_URL = 'https://endotrophic-conflictingly-kaydence.ngrok-free.dev';
 
 export default function speakWithBot() {
 
+  // variables
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(audioRecorder);
   const [recordingPath, setRecordingPath] = useState('');
@@ -42,12 +43,12 @@ export default function speakWithBot() {
     } as any);
 
     try {
-      const response = await fetch(`${API_URL}/speak-with-model`, { // used to be /generate-text-response
+      const response = await fetch(`${API_URL}/speak-with-model`, {
         method: 'POST',
-        body: formData, //get rid of file://
+        body: formData,
       });
 
-      const data = await response.json(); //stuff returned from backend
+      const data = await response.json(); //backend information returned
       //order matters
       Speech.speak(data.model_text_response); //say the response aloud
       setlistOfMessages([...listOfMessages, data.user_text, data.model_text_response])
@@ -66,7 +67,6 @@ export default function speakWithBot() {
 
   const stopRecording = async () => {
     // The recording will be available on `audioRecorder.uri`.
-    // const sound = require('../speech.wav');
     setPressed(!isPressed);
     await audioRecorder.stop();
     if ((audioRecorder?.uri) && (audioRecorder.uri.length > 0)) {
