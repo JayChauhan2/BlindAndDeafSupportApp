@@ -22,7 +22,6 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 tavily = TavilyClient(api_key=os.getenv("TAVILY_KEY"))
 
 app = FastAPI()
-user_coordinates = "None provided" #Store user location in backend memory
 
 class TextData(BaseModel):
     message: str
@@ -132,7 +131,7 @@ def return_text_response(content, request_type, image_query_type, user_location)
 
     if request_type == "text": #text query
         history['messages'].append({"role": "user", "content": content})
-        model_text_response = search_intent_or_not(content, history['messages'], user_coordinates)
+        model_text_response = search_intent_or_not(content, history['messages'], "None provided")
     elif request_type == "image": #image uploaded
         base_64_img=content
         model_prompt=""
@@ -169,7 +168,6 @@ def return_text_response(content, request_type, image_query_type, user_location)
         # append my message to history
         history['messages'].append({"role": "user", "content": user_text})
         model_text_response = search_intent_or_not(user_text, history['messages'], user_location)
-        user_coordinates=user_location
 
         # append model's message to history
         history['messages'].append({"role": "assistant", "content": model_text_response})
@@ -180,7 +178,7 @@ def return_text_response(content, request_type, image_query_type, user_location)
         
 @app.post("/text-model") 
 async def text_model(data: TextData):
-    model_text_response = return_text_response(data.message, "text", None, "None provided")
+    model_text_response = return_text_response(data.message, "text", None, None)
 
     #message condenser
     completion = client.chat.completions.create(
@@ -228,7 +226,7 @@ async def describe_scene(file: UploadFile = File(...)):
     with open(image_path, "rb") as image_file:
         base_64_img=base64.b64encode(image_file.read()).decode('utf-8')
 
-    model_text_response=return_text_response(base_64_img, "image", "describe", "None provided")
+    model_text_response=return_text_response(base_64_img, "image", "describe", None)
 
     return {"model_text_response": model_text_response}
 
@@ -255,7 +253,7 @@ async def read_text(file: UploadFile = File(...)):
     with open(image_path, "rb") as image_file:
         base_64_img=base64.b64encode(image_file.read()).decode('utf-8')
     
-    model_text_response=return_text_response(base_64_img, "image", "read", "None provided")
+    model_text_response=return_text_response(base_64_img, "image", "read", None)
 
     return {"model_text_response": model_text_response}
 
