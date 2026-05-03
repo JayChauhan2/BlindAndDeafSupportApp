@@ -41,6 +41,7 @@ export default function textBot() {
                 ))}
 
             </ScrollView>
+            {/* platform that moves up while typing */}
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.textBoxHolder}>
                 <TextInput
                 placeholder="Type away..."

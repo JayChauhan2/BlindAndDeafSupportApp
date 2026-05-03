@@ -3,10 +3,6 @@
     {
       "role": "assistant",
       "content": "My name is Clara. Nice to meet you!"
-    },
-    {
-      "role": "user",
-      "content": " Hey, how are you doing? I'm at the hampton roads convention center in hampton virginia."
     }
   ]
 }
