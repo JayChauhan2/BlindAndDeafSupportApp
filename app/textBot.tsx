@@ -32,6 +32,7 @@ export default function textBot() {
         }
     };
 
+
     return (
         
         <View style={styles.container}>
