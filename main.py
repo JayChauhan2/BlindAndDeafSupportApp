@@ -121,7 +121,6 @@ def search_intent_or_not(user_msg, message_history, location):
 
     return model_response
 
-
 messages=[]
 
 def return_text_response(content, request_type, image_query_type, user_location):
