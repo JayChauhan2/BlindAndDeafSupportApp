@@ -1,4 +1,4 @@
-# ScriptR - State Champions Software Dev | [Read More](https://www.linkedin.com/feed/update/urn:li:activity:7456860334314782720/) 
+# ScriptR - State Champions Software Dev 🏆 [Read More](https://www.linkedin.com/feed/update/urn:li:activity:7456860334314782720/) 
 
 ScriptR is a free and open source accessibility app for blind and deaf people. It bridges the gap between navigating apps online and understanding that information on the user's end.
 
